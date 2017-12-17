@@ -1,0 +1,13 @@
+// ==UserScript==
+// @name         Pendoria+
+// @description  Improve Pendoria with visual enhancements and statistics
+// @namespace    http://pendoria.net/
+// @version      0.4
+// @author       Michael Owens (Xikeon)
+// @match        http://pendoria.net/game
+// @match        https://pendoria.net/game
+// @match        http://www.pendoria.net/game
+// @match        https://www.pendoria.net/game
+// @grant        none
+// @requireSoonTm      https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js
+// ==/UserScript==

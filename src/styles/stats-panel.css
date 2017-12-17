@@ -1,0 +1,14 @@
+#pendoriaplus_stats {
+  position: relative;
+  background: rgba(0, 0, 0, .8);
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.pendoriaplus_stats_content {
+  padding: 15px 15px 15px 15px;
+}
+
+.pendoriaplus_stats_content label {
+  margin: 0;
+}

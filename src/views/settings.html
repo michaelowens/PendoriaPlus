@@ -1,0 +1,55 @@
+<div>
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a data-toggle="tab" data-link="settings">Settings</a>
+    </li>
+    <li>
+      <a data-toggle="tab" data-link="about">About Pendoria+</a>
+    </li>
+  </ul>
+
+  <div class="tab-game-content">
+    <div data-tab="settings">
+
+      <div data-loop="(k, v) in modules">
+        {{v}}
+      </div>
+
+      <label>
+        <input type="checkbox" name="pendoriaplus_stats_panel_enabled">
+        Show stats panel under mini profile
+      </label>
+      <br>
+      <label>
+        <input type="checkbox" name="pendoriaplus_low_action_notification">
+        Play sound when actions are running low:
+        <select name="pendoriaplus_low_action_notification_sound">
+          <option value="dingaling">Dingaling</option>
+          <option value="ting">Ting</option>
+          <option value="pop">Pop</option>
+        </select>
+      </label>
+      <br>
+      <label data-show="low_action_notification">
+        Volume: <input name="pendoriaplus_low_action_notification_volume" type="range" min="0" max="100">
+        {{settings.lowActionNotificationVolume}}
+        <button name="pendoriaplus_low_action_notification_test">&#9658;</button>
+      </label>
+
+      <!-- label>
+        <input type="checkbox" name="pendoriaplus_low_actions">
+        Play sound when actions are running low
+      </label -->
+    </div>
+
+    <div data-tab="about">
+      <p>
+        Thanks for using <strong>Pendoria+</strong>!
+      </p>
+
+      <p>
+        Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon.
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+{
+  "name": "PendoriaPlus",
+  "version": "0.1.0",
+  "description": "",
+  "main": "PendoriaPlus.user.js",
+  "scripts": {
+    "build2": "./node_modules/.bin/rollup src/main.js --output.format iife --output.file build/PendoriaPlus.user.js --banner \"$(cat src/banner.txt)\n\"",
+    "build": "./node_modules/.bin/rollup src/main.js --config",
+    "dev": "npm run build -- --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^0.52.1",
+    "rollup-plugin-file-as-blob": "^1.1.2",
+    "rollup-plugin-html": "^0.2.1",
+    "rollup-plugin-postcss": "^0.5.5"
+  }
+}

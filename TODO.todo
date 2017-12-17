@@ -1,0 +1,52 @@
+Global:
+ ☐ Add + to logo
+
+Modules:
+ ☐ Move settings to module, show in UI dynamically
+
+Statistics:
+ ☐ Global drops (rhodium, spare parts, items for battlers)
+   Ex. Avabur Enhanced?
+     https://imgur.com/tTHDXyB
+     https://imgur.com/99nCh9g
+     https://imgur.com/cbXMUlW
+
+PushNotifications:
+ ☐ PushBullet
+ ☐ Pushover
+ ☐ Chrome/Firefox Notifications (toasts?)
+ ☐ Support enabling multiple services
+ ☐ Integrate into Quests, Actions, Chat (, Market?)
+
+Actions:
+ ✔ Play sound at (configurable) low remaining count @done (17-12-17 15:58)
+   ✔ Play sound @done (17-12-17 15:58)
+   ✔ Push notification (Pushbullet/Pushover/alternative) @done (17-12-17 15:58)
+   ☐ Favico badge
+ ☐ Estimated actions till level
+
+Quest Management:
+ ☐ Show time remaining
+ ☐ Play sound at low remaining count
+   ☐ Make it configurable (sound, volume, enabled)
+
+Guild Management:
+ ☐ Show best building upgrade value
+
+Chat:
+ ✔ Make same size as content (give menu more space) @done (17-12-15 00:40)
+ ✔ Move channels to top/bottom of chat and turn into tabs @done (17-12-15 01:05)
+
+Improvements:
+ ☐ Save config to localstorage
+ ☐ Configure settings per module and build UI automatically
+ ☐ Improve access to data between modules (e.g. for accessing/sharing settings between modules)
+ ☐ Implement a Module manager
+   ☐ Handle module loading, enabling, disabling
+   ☐ Handle getting/setting module settings
+
+Bugs:
+ ✔ Chat resizes incorrectly to smaller resolutions @done (17-12-15 00:37)
+ ✔ Puls3: Xikeon, The Penndoria+ button moves over the buttons and moves the Users Online button into my chat :p @done (17-12-15 01:03)
+ ✔ Chat wrapper can block chat (can't click items) @done (17-12-15 00:54)
+ ☐ Find better way for notification sounds. Importing them as blob into a string is a bad idea.

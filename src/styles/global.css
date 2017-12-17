@@ -1,0 +1,9 @@
+#gameframe-menu {
+  width: 80%;
+}
+
+@media only screen and (max-width: 960px) {
+  #gameframe-menu li a {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,52 @@
+<div>
+  <div class="frame frame-vertical-left"></div>
+  <div class="frame frame-vertical-right"></div>
+  <div class="frame frame-horizontal-top"></div>
+  <div class="frame frame-horizontal-bottom"></div>
+  <div class="frame frame-top-left"></div>
+  <div class="frame frame-top-right"></div>
+  <div class="frame frame-bottom-right"></div>
+  <div class="frame frame-bottom-left"></div>
+  <div class="pendoriaplus_stats_content">
+    <div><a href="#" class="pendoriaplus_reset_stats">Reset</a></div>
+
+    <div>
+      <label>Actions:</label>
+      {{stats.actions|toLocaleString}}
+    </div>
+    <div>
+      <label>Exp gained:</label>
+      {{stats.exp|toLocaleString}}
+    </div>
+
+    <div id="pendoriaplus_stats_battle">
+      <div class="pendoriaplus_ts_only">
+        <label>Win / Loss:</label>
+        {{stats.wins|toLocaleString}} / {{stats.losses|toLocaleString}}
+      </div>
+      <div class="pendoriaplus_ts_only">
+        <label>Gold gained:</label>
+        {{stats.gold|toLocaleString}}
+      </div>
+      <div class="pendoriaplus_ts_only">
+        <label>Gold p/h:</label>
+        {{goldPerHour|toLocaleString}}
+      </div>
+    </div>
+
+    <div id="pendoriaplus_stats_ts">
+      <div class="pendoriaplus_ts_only">
+        <label>Quint procs:</label>
+        {{stats.quints|toLocaleString}} ({{quintsPercentage}}%)
+      </div>
+      <div class="pendoriaplus_ts_only">
+        <label>{{skill|ucfirst}} gained:</label>
+        {{stats.resources|toLocaleString}}
+      </div>
+      <div class="pendoriaplus_ts_only">
+        <label>{{skill|ucfirst}} p/h:</label>
+        {{resourcesPerHour|toLocaleString}}
+      </div>
+    </div>
+  </div>
+</div>
