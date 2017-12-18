@@ -692,7 +692,7 @@ let sounds = {
 let settings$1 = observable({
   enabled: true,
   lowActionSoundEnabled: true,
-  lowActions: 450,
+  lowActions: 10,
   sound: 'dingaling',
   volume: 50
 });
@@ -966,7 +966,7 @@ var Chat = {
   }
 };
 
-__$styleInject("#gameframe-menu {\r\n  width: 80%;\r\n}\r\n\r\n@media only screen and (max-width: 960px) {\r\n  #gameframe-menu li a {\r\n    font-size: 12px;\r\n  }\r\n}",undefined);
+__$styleInject("#gameframe-menu {\r\n  width: 80%;\r\n}\r\n\r\n@media only screen and (max-width: 980px) {\r\n  #gameframe-menu li a {\r\n    font-size: 12px;\r\n  }\r\n}",undefined);
 
 const MODULES = {
   VisualResourceStatus, AjaxCallback, StatsPanel, Chat, Settings

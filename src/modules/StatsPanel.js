@@ -18,7 +18,7 @@ export let sounds = {
 export let settings = observable({
   enabled: true,
   lowActionSoundEnabled: true,
-  lowActions: 450,
+  lowActions: 10,
   sound: 'dingaling',
   volume: 50
 })

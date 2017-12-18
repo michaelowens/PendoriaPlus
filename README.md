@@ -2,6 +2,12 @@
 
 Improve Pendoria with visual enhancements and statistics
 
+## Installation
+
+The easiest way is to install the latest stable release is through Greasyfork, which adds auto updates.
+
+[Click here to go to Greasyfork](https://greasyfork.org/en/scripts/36141-pendoria)
+
 ## Features
 
 - Stats panel under mini profile with more stats, such as: wins/loss, gold/exp/resources gained
