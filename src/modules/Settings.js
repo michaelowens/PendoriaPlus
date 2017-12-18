@@ -1,5 +1,5 @@
 import {log} from '../utils.js'
-import {MODULES} from '../pendoria'
+import ModuleManager from '../ModuleManager'
 import {$template, observable} from '../../lib/jQTpl'
 import StatsPanel from '../modules/StatsPanel'
 
@@ -7,7 +7,7 @@ import settingsView from '../views/settings.html'
 import '../styles/settings.css'
 
 const defaultScope = {
-  modules: [],
+  modules: {},
   settings: {
     panelEnabled: true,
     lowActionNotificationEnabled: true,
@@ -32,10 +32,12 @@ export default {
   },
 
   addModules () {
-    Object.keys(MODULES).forEach(module => {
-      log('[Settings]', 'add module', module)
+    let modules = ModuleManager.get()
+    Object.keys(modules).forEach(name => {
+      log('[Settings]', 'add module', name)
+      scope.modules[name] = modules[name]
     })
-    scope.modules.push(Object.keys(MODULES))
+    // scope.modules.push(Object.keys(modules))
   },
 
   addMenuItem () {

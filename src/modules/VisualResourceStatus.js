@@ -3,7 +3,7 @@
  */
 
 import {observable} from '../../lib/jQTpl'
-import PendoriaPlus from '../pendoria'
+import PendoriaPlus from '../PendoriaPlus'
 import AjaxCallback from './AjaxCallback'
 import {log} from '../utils'
 

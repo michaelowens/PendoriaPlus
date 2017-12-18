@@ -1,4 +1,4 @@
-import PendoriaPlus from './pendoria'
+import PendoriaPlus from './PendoriaPlus'
 
 $(function () {
   PendoriaPlus.init()

@@ -463,12 +463,6 @@ let observable = function (obj) {
   return p
 };
 
-// return {
-//   $template: $template,
-//   observable: observable,
-//   textNode: (text) => document.createTextNode(text)
-// }
-
 /**
  * Color resources red/green based on if you hit the goal (Guild Buildings & Scraptown)
  */
@@ -583,7 +577,7 @@ var settingsView = "<div>\r\n  <ul class=\"nav nav-tabs\">\r\n    <li class=\"ac
 __$styleInject("#pendoriaplus_settings {\r\n  color: #fff;\r\n}",undefined);
 
 const defaultScope = {
-  modules: [],
+  modules: {},
   settings: {
     panelEnabled: true,
     lowActionNotificationEnabled: true,
@@ -608,10 +602,12 @@ var Settings = {
   },
 
   addModules () {
-    Object.keys(MODULES).forEach(module => {
-      log('[Settings]', 'add module', module);
+    let modules = ModuleManager.get();
+    Object.keys(modules).forEach(name => {
+      log('[Settings]', 'add module', name);
+      scope$1.modules[name] = modules[name];
     });
-    scope$1.modules.push(Object.keys(MODULES));
+    // scope.modules.push(Object.keys(modules))
   },
 
   addMenuItem () {
@@ -966,13 +962,53 @@ var Chat = {
   }
 };
 
-__$styleInject("#gameframe-menu {\r\n  width: 80%;\r\n}\r\n\r\n@media only screen and (max-width: 980px) {\r\n  #gameframe-menu li a {\r\n    font-size: 12px;\r\n  }\r\n}",undefined);
-
-const MODULES = {
-  VisualResourceStatus, AjaxCallback, StatsPanel, Chat, Settings
+const modules = {
+  AjaxCallback,
+  VisualResourceStatus,
+  StatsPanel,
+  Chat,
+  Settings,
 };
 
-window._MODULES = MODULES;
+window.pp_modules = modules;
+
+var ModuleManager = {
+  init () {
+    log('[ModuleManager]', 'init');
+
+    // this.modules = {}
+
+    // enabledModules.forEach(this.add)
+  },
+
+  get (name = '') {
+    if (!name) {
+      return modules
+    }
+
+    if (!(name in modules)) {
+      return null
+    }
+
+    return modules[name]
+  },
+
+  add (name, module) {
+    if (!name) {
+      log('[ModuleManager]', 'tried to add empty module');
+      return
+    }
+
+    if (!module || typeof module !== 'object') {
+      log('[ModuleManager]', 'tried to add invalid module:', name);
+      return
+    }
+
+    modules[name] = module;
+  }
+};
+
+__$styleInject("#gameframe-menu {\r\n  width: 80%;\r\n}\r\n\r\n@media only screen and (max-width: 980px) {\r\n  #gameframe-menu li a {\r\n    font-size: 12px;\r\n  }\r\n}\r\n",undefined);
 
 var PendoriaPlus = {
   isInitialized: false,
@@ -986,9 +1022,10 @@ var PendoriaPlus = {
   },
 
   initModules () {
-    Object.keys(MODULES).forEach(name => {
-      MODULES[name].init();
-    });
+    Object.values(ModuleManager.get())
+      .forEach(module => {
+        module.init();
+      });
   },
 
   getSocket () {
