@@ -1,4 +1,4 @@
-import {log, capitalize} from '../utils'
+import {log, capitalize, ModuleSetting} from '../utils'
 import {scope as SettingsScope} from './Settings'
 
 import '../styles/stats-panel.css'
@@ -15,21 +15,12 @@ export let sounds = {
   ting: tingSound
 }
 
-export let settings = observable({
-  enabled: true,
-  lowActionSoundEnabled: true,
-  lowActions: 10,
-  sound: 'dingaling',
-  volume: 50
-})
-
 function perHour(total, actions) {
   let hours = (actions * 6) / 3600
   return Math.round(total / hours)
 }
 
 export let scope = observable({
-  panelEnabled: SettingsScope.settings.panelEnabled,
   type: 'battle',
   skill: '',
   stats: {
@@ -75,19 +66,63 @@ export let filters = {
 }
 
 export default {
+  settings: {
+    enabled: ModuleSetting({
+      label: 'Enabled',
+      default: true,
+    }),
+    panelEnabled: ModuleSetting({
+      label: 'Show panel under mini profile',
+      default: true,
+      onChange (value) {
+        if (!this.settings.enabled.value) {
+          return
+        }
+
+        if (value) {
+          this.initPanel()
+        } else {
+          this.removePanel()
+        }
+      },
+    }),
+    lowActionSoundEnabled: ModuleSetting({
+      label: 'Low action sound enabled',
+      default: true,
+    }),
+    lowActions: ModuleSetting({
+      label: 'Low action sound at X actions',
+      default: 10,
+      constraint: {
+        min: 1,
+        max: 400,
+      },
+    }),
+    sound: ModuleSetting({
+      label: 'Low action sound',
+      default: 'dingaling',
+      options: Object.keys(sounds)
+    }),
+    volume: ModuleSetting({
+      label: 'Low action sound volume',
+      default: 50,
+      constraint: {
+        min: 0,
+        max: 100,
+      },
+    }),
+  },
+
   init () {
     log('[StatsPanel]', 'init')
     log('[StatsPanel]', 'sounds', sounds)
 
     this.ranEnable = false
 
-    SettingsScope._onChange((k, newVal) => {
-      if (k === 'settings.lowActionNotificationVolume') {
-        this.setVolume(newVal)
-      }
-    })
+    this.onTradeskillData = this.onTradeskillData.bind(this)
+    this.onBattleData = this.onBattleData.bind(this)
 
-    if (settings.enabled) {
+    if (this.settings.enabled.value) {
       this.enable()
     }
   },
@@ -101,8 +136,8 @@ export default {
 
     this.bindSocketMessages()
     this.initPanel()
-    this.setSound(settings.sound)
-    this.setVolume(SettingsScope.settings.lowActionNotificationVolume)
+    this.setSound(this.settings.sound.value)
+    this.setVolume(this.settings.volume.value)
   },
 
   disable () {
@@ -118,17 +153,18 @@ export default {
   },
 
   bindSocketMessages () {
-    socket.on('tradeskill data', this.onTradeskillData.bind(this))
-    socket.on('battle data', this.onBattleData.bind(this))
+    socket.on('tradeskill data', this.onTradeskillData)
+    socket.on('battle data', this.onBattleData)
   },
 
   unbindSocketMessages () {
-    socket.off('tradeskill data', this.onTradeskillData.bind(this))
-    socket.off('battle data', this.onBattleData.bind(this))
+    socket.off('tradeskill data', this.onTradeskillData)
+    socket.off('battle data', this.onBattleData)
   },
 
   setSound (name) {
     this.audio = new Audio(sounds[name])
+    this.audio.setAttribute('name', name)
   },
 
   setVolume (volume) {
@@ -140,8 +176,16 @@ export default {
   },
 
   playSound() {
-    if (!this.audio || !settings.lowActionSoundEnabled) {
+    if (!this.audio || !this.settings.lowActionSoundEnabled.value) {
       return
+    }
+
+    if (this.audio.getAttribute('name') != this.settings.sound.value) {
+      this.setSound(this.settings.sound.value)
+    }
+
+    if (this.audio.volume !== this.settings.volume.value / 100) {
+      this.setVolume(this.settings.volume.value)
     }
 
     this.audio.play()
@@ -152,6 +196,10 @@ export default {
   },
 
   initPanel () {
+    if (this.$wrapper || !this.settings.panelEnabled.value) {
+      return
+    }
+
     this.$wrapper = $('<div id="pendoriaplus_stats"></div>').insertAfter($('#profile'))
     let app = $template(appView)
     this.$app = app({scope, filters}, this.$wrapper)
@@ -160,6 +208,10 @@ export default {
   },
 
   removePanel () {
+    if (!this.$wrapper) {
+      return
+    }
+
     this.$wrapper.remove()
     this.$wrapper = null
     this.$app = null
@@ -174,26 +226,20 @@ export default {
       scope.resetStatsDate = +new Date()
     })
 
-    // TODO: find a solution for this...
-    SettingsScope._onChange((k, newVal) => {
-      if (k === 'settings.enabled') {
-        scope.panelEnabled = newVal
-      }
-    })
-
     this.$app
-      .tplShow('> div', scope.panelEnabled)
+      // .tplShow('> div', this.settings.panelEnabled.value)
       .tplShow('#pendoriaplus_stats_battle', scope.type, type => type === 'battle')
       .tplShow('#pendoriaplus_stats_ts', scope.type, type => type === 'tradeskill')
   },
 
   checkActionsRemaining (data) {
-    if (!SettingsScope.settings.lowActionNotificationEnabled) {
-      return
-    }
+    // if (!this.settings.lowActionSoundEnabled.value) {
+    //   return
+    // }
 
     // TODO: improve check so if it skips a number magically, it will still play
-    if (data.actionsRemaining === settings.lowActions) {
+    log('[StatsPanel]', 'lowActions', data.actionsRemaining, '===', this.settings.lowActions.value, data.actionsRemaining === this.settings.lowActions.value)
+    if (data.actionsRemaining === this.settings.lowActions.value) {
       this.playSound()
     }
   },

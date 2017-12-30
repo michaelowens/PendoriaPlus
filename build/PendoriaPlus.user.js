@@ -9,6 +9,7 @@
 // @match        http://www.pendoria.net/game
 // @match        https://www.pendoria.net/game
 // @grant        none
+// @require      https://unpkg.com/vue@2.5.13/dist/vue.js
 // @requireSoonTm      https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js
 // ==/UserScript==
 
@@ -49,6 +50,100 @@ function capitalize([first, ...rest]) {
   }
   return first.toUpperCase() + rest.join('')
 }
+
+function guessType (setting) {
+  let type = 'string';
+
+  if (setting.type) {
+    return setting.type
+  }
+
+  if ('options' in setting) {
+    return 'select'
+  }
+
+  if ('constraint' in setting) {
+    if ('min' in setting.constraint || 'max' in setting.constraint) {
+      return 'number'
+    }
+  }
+
+  if ('default' in setting && typeof setting.default === 'boolean') {
+    return 'checkbox'
+  }
+
+  return type
+}
+
+function ModuleSetting (setting) {
+  const defaults = {
+    type: guessType(setting),
+    value: ('value' in setting ? setting.value : setting.default),
+    toString () {
+      return this.value || this.default
+    }
+  };
+
+  let obj = Object.assign(defaults, setting);
+  let oldValue = JSON.parse(JSON.stringify(obj.value));
+  if ('onChange' in obj) {
+    setInterval(() => {
+      if (obj.value !== oldValue) {
+        oldValue = JSON.parse(JSON.stringify(obj.value));
+        obj.onChange(obj.value);
+      }
+    }, 10);
+  }
+
+  return obj
+}
+
+/*export class ModuleSetting {
+  constructor (options) {
+    const defaults = {
+      type: this.guessType(options)
+    }
+
+    this.options = Object.assign({}, defaults, options)
+  }
+
+  get value() {
+    return this.options.value
+  }
+
+  set value(value) {
+    if (this.options.type === 'number') {
+      this.options.value = parseInt(value, 10)
+      return
+    }
+
+    this.options.value = value
+  }
+
+  guessType (options) {
+    let type = 'string'
+
+    if (options.type) {
+      return options.type
+    }
+
+    if ('constraint' in options) {
+      if ('min' in options.constraint || 'max' in options.constraint) {
+        return 'number'
+      }
+    }
+
+    if ('default' in options && typeof options.default === 'boolean') {
+      return 'checkbox'
+    }
+
+    return type
+  }
+
+  toString () {
+    return this.options.value
+  }
+}*/
 
 /**
  * Hook onto jQuery.ajaxComplete and be able to attach events to ajax calls
@@ -463,15 +558,24 @@ let observable = function (obj) {
   return p
 };
 
+// return {
+//   $template: $template,
+//   observable: observable,
+//   textNode: (text) => document.createTextNode(text)
+// }
+
 /**
  * Color resources red/green based on if you hit the goal (Guild Buildings & Scraptown)
  */
 
-let settings = observable({
-  enabled: true
-});
-
 var VisualResourceStatus = {
+  settings: {
+    enabled: ModuleSetting({
+      label: 'Enabled',
+      default: true,
+    }),
+  },
+
   init () {
     // do I need this?
     if (!PendoriaPlus.isInitialized) {
@@ -481,9 +585,12 @@ var VisualResourceStatus = {
 
     log('[VisualResourceStatus]', 'init');
 
+    this.ajaxGuildBuildings = this.ajaxGuildBuildings.bind(this);
+    this.ajaxScraptownDetails = this.ajaxScraptownDetails.bind(this);
+
     this.ranEnable = false;
 
-    if (settings.enabled) {
+    if (this.settings.enabled.value) {
       this.enable();
     }
   },
@@ -507,8 +614,8 @@ var VisualResourceStatus = {
   },
 
   setEventHandlers () {
-    AjaxCallback.on('/guild/buildings', this.ajaxGuildBuildings.bind(this));
-    AjaxCallback.on('/scraptown/details/*', this.ajaxScraptownDetails.bind(this));
+    AjaxCallback.on('/guild/buildings', this.ajaxGuildBuildings);
+    AjaxCallback.on('/scraptown/details/*', this.ajaxScraptownDetails);
   },
 
   removeEventHandlers () {
@@ -572,11 +679,66 @@ var VisualResourceStatus = {
   }
 };
 
-var settingsView = "<div>\r\n  <ul class=\"nav nav-tabs\">\r\n    <li class=\"active\">\r\n      <a data-toggle=\"tab\" data-link=\"settings\">Settings</a>\r\n    </li>\r\n    <li>\r\n      <a data-toggle=\"tab\" data-link=\"about\">About Pendoria+</a>\r\n    </li>\r\n  </ul>\r\n\r\n  <div class=\"tab-game-content\">\r\n    <div data-tab=\"settings\">\r\n\r\n      <div data-loop=\"(k, v) in modules\">\r\n        {{v}}\r\n      </div>\r\n\r\n      <label>\r\n        <input type=\"checkbox\" name=\"pendoriaplus_stats_panel_enabled\">\r\n        Show stats panel under mini profile\r\n      </label>\r\n      <br>\r\n      <label>\r\n        <input type=\"checkbox\" name=\"pendoriaplus_low_action_notification\">\r\n        Play sound when actions are running low:\r\n        <select name=\"pendoriaplus_low_action_notification_sound\">\r\n          <option value=\"dingaling\">Dingaling</option>\r\n          <option value=\"ting\">Ting</option>\r\n          <option value=\"pop\">Pop</option>\r\n        </select>\r\n      </label>\r\n      <br>\r\n      <label data-show=\"low_action_notification\">\r\n        Volume: <input name=\"pendoriaplus_low_action_notification_volume\" type=\"range\" min=\"0\" max=\"100\">\r\n        {{settings.lowActionNotificationVolume}}\r\n        <button name=\"pendoriaplus_low_action_notification_test\">&#9658;</button>\r\n      </label>\r\n\r\n      <!-- label>\r\n        <input type=\"checkbox\" name=\"pendoriaplus_low_actions\">\r\n        Play sound when actions are running low\r\n      </label -->\r\n    </div>\r\n\r\n    <div data-tab=\"about\">\r\n      <p>\r\n        Thanks for using <strong>Pendoria+</strong>!\r\n      </p>\r\n\r\n      <p>\r\n        Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon.\r\n      </p>\r\n    </div>\r\n  </div>\r\n</div>";
+__$styleInject("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.pp_settings_module_header {\n  border-bottom: 1px solid white;\n}\n",undefined);
 
-__$styleInject("#pendoriaplus_settings {\r\n  color: #fff;\r\n}",undefined);
+var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"pp_settings"}},[_c('ul',{staticClass:"nav nav-tabs"},[_c('li',{class:{active: _vm.tab == 'settings'}},[_c('a',{on:{"click":function($event){_vm.tab = 'settings';}}},[_vm._v("Settings")])]),_vm._v(" "),_c('li',{class:{active: _vm.tab == 'about'}},[_c('a',{on:{"click":function($event){_vm.tab = 'about';}}},[_vm._v("About Pendoria+")])])]),_vm._v(" "),_c('div',{staticClass:"tab-game-content"},[(_vm.tab == 'settings')?_c('div',_vm._l((_vm.modulesWithSettings),function(module,name){return _c('div',[_c('h2',{staticClass:"pp_settings_module_header",on:{"click":function($event){_vm.toggleModuleSettings(name);}}},[('enabled' in module.settings)?_c('input',{directives:[{name:"model",rawName:"v-model",value:(module.settings.enabled.value),expression:"module.settings.enabled.value"}],attrs:{"type":"checkbox"},domProps:{"checked":Array.isArray(module.settings.enabled.value)?_vm._i(module.settings.enabled.value,null)>-1:(module.settings.enabled.value)},on:{"change":function($event){var $$a=module.settings.enabled.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(module.settings.enabled.value=$$a.concat([$$v]));}else{$$i>-1&&(module.settings.enabled.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(module.settings.enabled, "value", $$c);}}}}):_vm._e(),_vm._v(" "+_vm._s(name)+" ")]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.modulesOpened.includes(name) || true),expression:"modulesOpened.includes(name) || true"}]},_vm._l((module.settings),function(value,setting){return (setting != 'enabled')?_c('div',{staticStyle:{"height":"31px"}},[_c('label',{attrs:{"for":setting}},[_vm._v(" "+_vm._s(value.label)+" ")]),_vm._v(" "),(value.type == 'checkbox')?_c('input',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting,"type":"checkbox"},domProps:{"checked":Array.isArray(value.value)?_vm._i(value.value,null)>-1:(value.value)},on:{"change":function($event){var $$a=value.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(value.value=$$a.concat([$$v]));}else{$$i>-1&&(value.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(value, "value", $$c);}}}}):_vm._e(),_vm._v(" "),(value.type == 'number')?_c('div',{staticStyle:{"display":"inline-block","width":"40%"}},[_c('input',{directives:[{name:"model",rawName:"v-model.number",value:(value.value),expression:"value.value",modifiers:{"number":true}}],attrs:{"id":setting,"type":"range","min":value.constraint.min,"max":value.constraint.max},domProps:{"value":(value.value)},on:{"__r":function($event){_vm.$set(value, "value", _vm._n($event.target.value));},"blur":function($event){_vm.$forceUpdate();}}}),_vm._v(" "+_vm._s(value.value)+" ")]):_vm._e(),_vm._v(" "),(value.type == 'select')?_c('select',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(value, "value", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);}}},_vm._l((value.options),function(option){return _c('option',{domProps:{"value":option}},[_vm._v(" "+_vm._s(_vm._f("capitalize")(option))+" ")])})):_vm._e(),_vm._v(" "),(setting === 'sound')?_c('button',{on:{"click":_vm.playSound}},[_vm._v("►")]):_vm._e()]):_vm._e()}))])})):_vm._e(),_vm._v(" "),(_vm.tab == 'about')?_c('div',[_vm._m(0),_vm._v(" "),_c('p',[_vm._v(" Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon. ")])]):_vm._e()])])},staticRenderFns: [function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',[_vm._v(" Thanks for using "),_c('strong',[_vm._v("Pendoria+")]),_vm._v("! ")])}],
+  filters: {capitalize},
+
+  data () {
+    return {
+      modulesOpened: []
+    }
+  },
+
+  computed: {
+    modulesWithSettings () {
+      return Object.keys(this.modules)
+        .filter(k => 'settings' in this.modules[k] && Object.keys(this.modules[k].settings).length > 0)
+        .reduce((res, k) => (res[k] = this.modules[k], res), {})
+    }
+  },
+
+  watch: {
+    modules: {
+      handler (modules, key) {
+        // very lazy way of doing this...
+        Object.keys(this.modules).forEach(name => {
+          if (!('settings' in this.modules[name]) || !('enabled' in this.modules[name].settings)) {
+            return
+          }
+
+          if (this.modules[name].settings.enabled.value) {
+            setTimeout(() => {
+              this.modules[name].enable();
+            }, 100);
+          } else {
+            this.$nextTick(() => {
+              this.modules[name].disable();
+            });
+          }
+        });
+      },
+      deep: true
+    }
+  },
+
+  methods: {
+    toggleModuleSettings (name) {
+      return
+      const idx = this.modulesOpened.indexOf(name);
+      if (idx !== -1) {
+        this.modulesOpened.splice(idx, 1);
+      } else {
+        this.modulesOpened.push(name);
+      }
+    }
+  }
+};
+
+__$styleInject("#pp_settings label {\r\n  width: 50%;\r\n  max-width: 40%;\r\n  /*height: 20px;*/\r\n}\r\n\r\n#pp_settings input[type=\"range\"] {\r\n  display: inline-block;\r\n  width: 75%;\r\n  margin-right: 5px;\r\n}",undefined);
 
 const defaultScope = {
+  test_version: '0.1',
   modules: {},
   settings: {
     panelEnabled: true,
@@ -592,9 +754,16 @@ const defaultScope = {
 };
 
 // TODO: load from localstorage?
-let scope$1 = observable(defaultScope);
+let scope$1 = defaultScope;
 
 var Settings = {
+  methods: {
+    playSound () {
+      log('[Settings]', 'test sound');
+      StatsPanel.playSound();
+    }
+  },
+
   init () {
     log('[Settings]', 'init');
     this.addModules();
@@ -629,10 +798,18 @@ var Settings = {
   },
 
   initView () {
-    let settingsTpl = $template(settingsView);
-    this.$view = settingsTpl(scope$1, this.$wrapper);
+    const ViewCtor = Vue.extend(settingsView);
+    const ViewInstance = new ViewCtor({
+      el: this.$wrapper[0],
+      // template: settingsView,
+      data: scope$1,
+      methods: this.methods,
+      // methods: methods
+    });
+    // let settingsTpl = $template(settingsView)
+    // this.$view = settingsTpl(scope, this.$wrapper)
 
-    this.initViewBindings();
+    // this.initViewBindings()
   },
 
   initViewBindings () {
@@ -661,11 +838,6 @@ var Settings = {
         StatsPanel.setSound(newVal);
       }
     });
-
-    this.$view.find('[name="pendoriaplus_low_action_notification_test"]').on('click', () => {
-      log('[Settings]', 'play sound', StatsPanel.playSound);
-      StatsPanel.playSound();
-    });
   },
 };
 
@@ -685,21 +857,12 @@ let sounds = {
   ting: tingSound
 };
 
-let settings$1 = observable({
-  enabled: true,
-  lowActionSoundEnabled: true,
-  lowActions: 10,
-  sound: 'dingaling',
-  volume: 50
-});
-
 function perHour(total, actions) {
   let hours = (actions * 6) / 3600;
   return Math.round(total / hours)
 }
 
 let scope$$1 = observable({
-  panelEnabled: scope$1.settings.panelEnabled,
   type: 'battle',
   skill: '',
   stats: {
@@ -745,19 +908,63 @@ let filters = {
 };
 
 var StatsPanel = {
+  settings: {
+    enabled: ModuleSetting({
+      label: 'Enabled',
+      default: true,
+    }),
+    panelEnabled: ModuleSetting({
+      label: 'Show panel under mini profile',
+      default: true,
+      onChange (value) {
+        if (!this.settings.enabled.value) {
+          return
+        }
+
+        if (value) {
+          this.initPanel();
+        } else {
+          this.removePanel();
+        }
+      },
+    }),
+    lowActionSoundEnabled: ModuleSetting({
+      label: 'Low action sound enabled',
+      default: true,
+    }),
+    lowActions: ModuleSetting({
+      label: 'Low action sound at X actions',
+      default: 10,
+      constraint: {
+        min: 1,
+        max: 400,
+      },
+    }),
+    sound: ModuleSetting({
+      label: 'Low action sound',
+      default: 'dingaling',
+      options: Object.keys(sounds)
+    }),
+    volume: ModuleSetting({
+      label: 'Low action sound volume',
+      default: 50,
+      constraint: {
+        min: 0,
+        max: 100,
+      },
+    }),
+  },
+
   init () {
     log('[StatsPanel]', 'init');
     log('[StatsPanel]', 'sounds', sounds);
 
     this.ranEnable = false;
 
-    scope$1._onChange((k, newVal) => {
-      if (k === 'settings.lowActionNotificationVolume') {
-        this.setVolume(newVal);
-      }
-    });
+    this.onTradeskillData = this.onTradeskillData.bind(this);
+    this.onBattleData = this.onBattleData.bind(this);
 
-    if (settings$1.enabled) {
+    if (this.settings.enabled.value) {
       this.enable();
     }
   },
@@ -771,8 +978,8 @@ var StatsPanel = {
 
     this.bindSocketMessages();
     this.initPanel();
-    this.setSound(settings$1.sound);
-    this.setVolume(scope$1.settings.lowActionNotificationVolume);
+    this.setSound(this.settings.sound.value);
+    this.setVolume(this.settings.volume.value);
   },
 
   disable () {
@@ -788,17 +995,18 @@ var StatsPanel = {
   },
 
   bindSocketMessages () {
-    socket.on('tradeskill data', this.onTradeskillData.bind(this));
-    socket.on('battle data', this.onBattleData.bind(this));
+    socket.on('tradeskill data', this.onTradeskillData);
+    socket.on('battle data', this.onBattleData);
   },
 
   unbindSocketMessages () {
-    socket.off('tradeskill data', this.onTradeskillData.bind(this));
-    socket.off('battle data', this.onBattleData.bind(this));
+    socket.off('tradeskill data', this.onTradeskillData);
+    socket.off('battle data', this.onBattleData);
   },
 
   setSound (name) {
     this.audio = new Audio(sounds[name]);
+    this.audio.setAttribute('name', name);
   },
 
   setVolume (volume) {
@@ -810,8 +1018,16 @@ var StatsPanel = {
   },
 
   playSound() {
-    if (!this.audio || !settings$1.lowActionSoundEnabled) {
+    if (!this.audio || !this.settings.lowActionSoundEnabled.value) {
       return
+    }
+
+    if (this.audio.getAttribute('name') != this.settings.sound.value) {
+      this.setSound(this.settings.sound.value);
+    }
+
+    if (this.audio.volume !== this.settings.volume.value / 100) {
+      this.setVolume(this.settings.volume.value);
     }
 
     this.audio.play();
@@ -822,6 +1038,10 @@ var StatsPanel = {
   },
 
   initPanel () {
+    if (this.$wrapper || !this.settings.panelEnabled.value) {
+      return
+    }
+
     this.$wrapper = $('<div id="pendoriaplus_stats"></div>').insertAfter($('#profile'));
     let app = $template(appView);
     this.$app = app({scope: scope$$1, filters}, this.$wrapper);
@@ -830,6 +1050,10 @@ var StatsPanel = {
   },
 
   removePanel () {
+    if (!this.$wrapper) {
+      return
+    }
+
     this.$wrapper.remove();
     this.$wrapper = null;
     this.$app = null;
@@ -844,26 +1068,20 @@ var StatsPanel = {
       scope$$1.resetStatsDate = +new Date();
     });
 
-    // TODO: find a solution for this...
-    scope$1._onChange((k, newVal) => {
-      if (k === 'settings.enabled') {
-        scope$$1.panelEnabled = newVal;
-      }
-    });
-
     this.$app
-      .tplShow('> div', scope$$1.panelEnabled)
+      // .tplShow('> div', this.settings.panelEnabled.value)
       .tplShow('#pendoriaplus_stats_battle', scope$$1.type, type => type === 'battle')
       .tplShow('#pendoriaplus_stats_ts', scope$$1.type, type => type === 'tradeskill');
   },
 
   checkActionsRemaining (data) {
-    if (!scope$1.settings.lowActionNotificationEnabled) {
-      return
-    }
+    // if (!this.settings.lowActionSoundEnabled.value) {
+    //   return
+    // }
 
     // TODO: improve check so if it skips a number magically, it will still play
-    if (data.actionsRemaining === settings$1.lowActions) {
+    log('[StatsPanel]', 'lowActions', data.actionsRemaining, '===', this.settings.lowActions.value, data.actionsRemaining === this.settings.lowActions.value);
+    if (data.actionsRemaining === this.settings.lowActions.value) {
       this.playSound();
     }
   },
@@ -920,19 +1138,31 @@ var StatsPanel = {
   }
 };
 
-__$styleInject("#chat_wrapper {\r\n  position: absolute;\r\n  bottom: 0;\r\n  left: 50%;\r\n  transform: translateX(-50%);\r\n  padding: 0 20px;\r\n  height: 30%;\r\n  width: 100%;\r\n  max-width: 1100px;\r\n  pointer-events: none;\r\n}\r\n\r\n#chat_wrapper #chat {\r\n  position: relative;\r\n  margin: 0 0 0 auto;\r\n  height: 100%;\r\n  width: calc(80%);\r\n  pointer-events: all;\r\n}\r\n\r\n#chat_wrapper #chat #chat-content {\r\n  width: 100%;\r\n  margin: 0;\r\n}\r\n\r\n/* Not so much an aside anymore, is it */\r\n#chat_wrapper #chat .wrapper {\r\n  display: grid;\r\n  grid-template-rows: min-content auto;\r\n}\r\n\r\n#chat_wrapper #chat aside {\r\n  float: none;\r\n  overflow: hidden;\r\n  height: auto;\r\n  width: 100%;\r\n  padding: 10px 0px 0 0;\r\n}\r\n\r\n#chat_wrapper #chat aside ul {\r\n  float: left;\r\n  margin: 0;\r\n}\r\n\r\n#chat_wrapper #chat aside li {\r\n  display: inline-block;\r\n  margin-right: 10px;\r\n}\r\n",undefined);
-
-let settings$3 = observable({
-  enabled: true
-});
+__$styleInject("#chat_wrapper {\r\n  position: absolute;\r\n  bottom: 0;\r\n  left: 50%;\r\n  transform: translateX(-50%);\r\n  padding: 0 20px;\r\n  height: 30%;\r\n  width: 100%;\r\n  max-width: 1100px;\r\n  pointer-events: none;\r\n}\r\n\r\n#chat_wrapper #chat {\r\n  position: relative;\r\n  margin: 0 0 0 auto;\r\n  height: 100%;\r\n  width: calc(80%);\r\n  pointer-events: all;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs #chat-content {\r\n  width: 100%;\r\n  margin: 0;\r\n}\r\n\r\n/* Not so much an aside anymore, is it */\r\n#chat_wrapper #chat.with-tabs .wrapper {\r\n  display: grid;\r\n  grid-template-rows: min-content auto;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs aside {\r\n  float: none;\r\n  overflow: hidden;\r\n  height: auto;\r\n  width: 100%;\r\n  padding: 10px 0px 0 0;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs aside ul {\r\n  float: left;\r\n  margin: 0;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs aside li {\r\n  display: inline-block;\r\n  margin-right: 10px;\r\n}\r\n",undefined);
 
 var Chat = {
+  // ranEnable: false,
+
+  settings: {
+    enabled: ModuleSetting({
+      label: 'Enabled',
+      default: true,
+    }),
+    tabs: ModuleSetting({
+      label: 'Channels as tabs',
+      default: true,
+      onChange (value) {
+        this.toggleTabs(value);
+      },
+    })
+  },
+
   init () {
     this.ranEnable = false;
     this.$wrapper = $('<div id="chat_wrapper"></div>');
     this.$chat = $(document).find('#chat');
 
-    if (settings$3.enabled) {
+    if (this.settings.enabled) {
       this.enable();
     }
   },
@@ -948,6 +1178,11 @@ var Chat = {
     this.$chat
       .prepend('<div class="frame frame-vertical-left"></div>')
       .prepend('<div class="frame frame-vertical-right"></div>');
+
+    log('[Chat]', 'show tabs?', JSON.stringify(this.settings.tabs.value));
+    if (this.settings.tabs.value) {
+      this.$chat.addClass('with-tabs');
+    }
   },
 
   disable () {
@@ -958,7 +1193,17 @@ var Chat = {
     this.ranEnable = false;
 
     this.$chat.unwrap();
+    this.$chat.removeClass('with-tabs');
     this.$chat.find('.frame-vertical-left, .frame-vertical-right').remove();
+  },
+
+  toggleTabs (value) {
+    if (typeof value == 'undefined') {
+      value = !this.settings.tabs;
+    }
+
+    value = !!value;
+    this.$chat[value ? 'addClass' : 'removeClass']('with-tabs');
   }
 };
 
@@ -975,10 +1220,6 @@ window.pp_modules = modules;
 var ModuleManager = {
   init () {
     log('[ModuleManager]', 'init');
-
-    // this.modules = {}
-
-    // enabledModules.forEach(this.add)
   },
 
   get (name = '') {
@@ -1024,6 +1265,15 @@ var PendoriaPlus = {
   initModules () {
     Object.values(ModuleManager.get())
       .forEach(module => {
+        if ('settings' in module) {
+          Object.keys(module.settings)
+            .forEach(key => {
+              let setting = module.settings[key];
+              if (setting.onChange) {
+                setting.onChange = setting.onChange.bind(module);
+              }
+            });
+        }
         module.init();
       });
   },
@@ -1034,7 +1284,10 @@ var PendoriaPlus = {
 };
 
 $(function () {
-  PendoriaPlus.init();
+  if (!window.hasPendoriaPlus) {
+    window.hasPendoriaPlus = true;
+    PendoriaPlus.init();
+  }
 });
 
 }());

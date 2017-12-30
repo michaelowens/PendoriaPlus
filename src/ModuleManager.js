@@ -18,10 +18,6 @@ window.pp_modules = modules
 export default {
   init () {
     log('[ModuleManager]', 'init')
-
-    // this.modules = {}
-
-    // enabledModules.forEach(this.add)
   },
 
   get (name = '') {

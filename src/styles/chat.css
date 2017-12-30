@@ -18,18 +18,18 @@
   pointer-events: all;
 }
 
-#chat_wrapper #chat #chat-content {
+#chat_wrapper #chat.with-tabs #chat-content {
   width: 100%;
   margin: 0;
 }
 
 /* Not so much an aside anymore, is it */
-#chat_wrapper #chat .wrapper {
+#chat_wrapper #chat.with-tabs .wrapper {
   display: grid;
   grid-template-rows: min-content auto;
 }
 
-#chat_wrapper #chat aside {
+#chat_wrapper #chat.with-tabs aside {
   float: none;
   overflow: hidden;
   height: auto;
@@ -37,12 +37,12 @@
   padding: 10px 0px 0 0;
 }
 
-#chat_wrapper #chat aside ul {
+#chat_wrapper #chat.with-tabs aside ul {
   float: left;
   margin: 0;
 }
 
-#chat_wrapper #chat aside li {
+#chat_wrapper #chat.with-tabs aside li {
   display: inline-block;
   margin-right: 10px;
 }

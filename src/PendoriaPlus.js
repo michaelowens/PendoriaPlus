@@ -17,6 +17,15 @@ export default {
   initModules () {
     Object.values(ModuleManager.get())
       .forEach(module => {
+        if ('settings' in module) {
+          Object.keys(module.settings)
+            .forEach(key => {
+              let setting = module.settings[key]
+              if (setting.onChange) {
+                setting.onChange = setting.onChange.bind(module)
+              }
+            })
+        }
         module.init()
       })
   },

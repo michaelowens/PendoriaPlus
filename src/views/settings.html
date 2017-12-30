@@ -1,18 +1,18 @@
 <div>
   <ul class="nav nav-tabs">
-    <li class="active">
-      <a data-toggle="tab" data-link="settings">Settings</a>
+    <li :class="{active: tab == 'settings'}">
+      <a @click="tab = 'settings'">Settings</a>
     </li>
-    <li>
-      <a data-toggle="tab" data-link="about">About Pendoria+</a>
+    <li :class="{active: tab == 'about'}">
+      <a @click="tab = 'about'">About Pendoria+</a>
     </li>
   </ul>
 
   <div class="tab-game-content">
-    <div data-tab="settings">
+    <div v-if="tab == 'settings'">
 
-      <div data-loop="(k, v) in modules">
-        {{v}}
+      <div>
+        <input type="text" v-model="test_version"> {{ test_version }}
       </div>
 
       <label>
@@ -42,7 +42,7 @@
       </label -->
     </div>
 
-    <div data-tab="about">
+    <div v-if="tab == 'about'">
       <p>
         Thanks for using <strong>Pendoria+</strong>!
       </p>

@@ -3,10 +3,11 @@ import ModuleManager from '../ModuleManager'
 import {$template, observable} from '../../lib/jQTpl'
 import StatsPanel from '../modules/StatsPanel'
 
-import settingsView from '../views/settings.html'
+import settingsView from '../views/settings.vue'
 import '../styles/settings.css'
 
 const defaultScope = {
+  test_version: '0.1',
   modules: {},
   settings: {
     panelEnabled: true,
@@ -22,9 +23,16 @@ const defaultScope = {
 }
 
 // TODO: load from localstorage?
-export let scope = observable(defaultScope)
+export let scope = defaultScope
 
 export default {
+  methods: {
+    playSound () {
+      log('[Settings]', 'test sound')
+      StatsPanel.playSound()
+    }
+  },
+
   init () {
     log('[Settings]', 'init')
     this.addModules()
@@ -59,10 +67,18 @@ export default {
   },
 
   initView () {
-    let settingsTpl = $template(settingsView)
-    this.$view = settingsTpl(scope, this.$wrapper)
+    const ViewCtor = Vue.extend(settingsView)
+    const ViewInstance = new ViewCtor({
+      el: this.$wrapper[0],
+      // template: settingsView,
+      data: scope,
+      methods: this.methods,
+      // methods: methods
+    })
+    // let settingsTpl = $template(settingsView)
+    // this.$view = settingsTpl(scope, this.$wrapper)
 
-    this.initViewBindings()
+    // this.initViewBindings()
   },
 
   initViewBindings () {
@@ -90,11 +106,6 @@ export default {
       if (k === 'settings.lowActionNotificationSound') {
         StatsPanel.setSound(newVal)
       }
-    })
-
-    this.$view.find('[name="pendoriaplus_low_action_notification_test"]').on('click', () => {
-      log('[Settings]', 'play sound', StatsPanel.playSound)
-      StatsPanel.playSound()
     })
   },
 }

@@ -5,13 +5,16 @@
 import {observable} from '../../lib/jQTpl'
 import PendoriaPlus from '../PendoriaPlus'
 import AjaxCallback from './AjaxCallback'
-import {log} from '../utils'
-
-export let settings = observable({
-  enabled: true
-})
+import {log, ModuleSetting} from '../utils'
 
 export default {
+  settings: {
+    enabled: ModuleSetting({
+      label: 'Enabled',
+      default: true,
+    }),
+  },
+
   init () {
     // do I need this?
     if (!PendoriaPlus.isInitialized) {
@@ -21,9 +24,12 @@ export default {
 
     log('[VisualResourceStatus]', 'init')
 
+    this.ajaxGuildBuildings = this.ajaxGuildBuildings.bind(this)
+    this.ajaxScraptownDetails = this.ajaxScraptownDetails.bind(this)
+
     this.ranEnable = false
 
-    if (settings.enabled) {
+    if (this.settings.enabled.value) {
       this.enable()
     }
   },
@@ -47,8 +53,8 @@ export default {
   },
 
   setEventHandlers () {
-    AjaxCallback.on('/guild/buildings', this.ajaxGuildBuildings.bind(this))
-    AjaxCallback.on('/scraptown/details/*', this.ajaxScraptownDetails.bind(this))
+    AjaxCallback.on('/guild/buildings', this.ajaxGuildBuildings)
+    AjaxCallback.on('/scraptown/details/*', this.ajaxScraptownDetails)
   },
 
   removeEventHandlers () {

@@ -4,6 +4,7 @@
   "description": "",
   "main": "PendoriaPlus.user.js",
   "scripts": {
+    "jqtpl": "./node_modules/.bin/rollup lib/jQTpl.js --name jQTpl --output.format iife --output.file build/jQTpl.js",
     "build2": "./node_modules/.bin/rollup src/main.js --output.format iife --output.file build/PendoriaPlus.user.js --banner \"$(cat src/banner.txt)\n\"",
     "build": "./node_modules/.bin/rollup src/main.js --config",
     "dev": "npm run build -- --watch",
@@ -16,6 +17,8 @@
     "rollup": "^0.52.1",
     "rollup-plugin-file-as-blob": "^1.1.2",
     "rollup-plugin-html": "^0.2.1",
-    "rollup-plugin-postcss": "^0.5.5"
+    "rollup-plugin-postcss": "^0.5.5",
+    "rollup-plugin-vue": "^3.0.0",
+    "vue-template-compiler": "^2.5.13"
   }
 }

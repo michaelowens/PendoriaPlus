@@ -1,3 +1,11 @@
-#pendoriaplus_settings {
-  color: #fff;
+#pp_settings label {
+  width: 50%;
+  max-width: 40%;
+  /*height: 20px;*/
+}
+
+#pp_settings input[type="range"] {
+  display: inline-block;
+  width: 75%;
+  margin-right: 5px;
 }
