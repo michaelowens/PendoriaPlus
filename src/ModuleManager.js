@@ -3,6 +3,7 @@ import AjaxCallback from './modules/AjaxCallback'
 import VisualResourceStatus from './modules/VisualResourceStatus'
 import StatsPanel from './modules/StatsPanel'
 import Chat from './modules/Chat'
+import Quests from './modules/Quests'
 import Settings from './modules/Settings'
 
 const modules = {
@@ -10,6 +11,7 @@ const modules = {
   VisualResourceStatus,
   StatsPanel,
   Chat,
+  Quests,
   Settings,
 }
 

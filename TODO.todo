@@ -1,9 +1,6 @@
 Global:
  ☐ Add + to logo
 
-Modules:
- ☐ Move settings to module, show in UI dynamically
-
 Statistics:
  ☐ Global drops (rhodium, spare parts, items for battlers)
    Ex. Avabur Enhanced?
@@ -26,7 +23,7 @@ Actions:
  ☐ Estimated actions till level
 
 Quest Management:
- ☐ Show time remaining
+ ✔ Show time remaining @done (17-12-30 20:37)
  ☐ Play sound at low remaining count
    ☐ Make it configurable (sound, volume, enabled)
 
@@ -39,14 +36,15 @@ Chat:
 
 Improvements:
  ☐ Save config to localstorage
- ☐ Configure settings per module and build UI automatically
- ☐ Improve access to data between modules (e.g. for accessing/sharing settings between modules)
- ☐ Implement a Module manager
-   ☐ Handle module loading, enabling, disabling
-   ☐ Handle getting/setting module settings
+ ☐ Improve settings access, so you don't have to add .value everywhere
+ ✔ Configure settings per module and build UI automatically @done (17-12-30 20:38)
+ ✔ Improve access to data between modules (e.g. for accessing/sharing settings between modules) @done (17-12-30 20:38)
+ ✔ Implement a Module manager @done (17-12-30 20:38)
+   ✔ Handle module loading, enabling, disabling @done (17-12-30 20:38)
+   ✔ Handle getting/setting module settings @done (17-12-30 20:38)
 
 Bugs:
+ ☐ Find better way for notification sounds. Importing them as blob into a string is a bad idea.
  ✔ Chat resizes incorrectly to smaller resolutions @done (17-12-15 00:37)
  ✔ Puls3: Xikeon, The Penndoria+ button moves over the buttons and moves the Users Online button into my chat :p @done (17-12-15 01:03)
  ✔ Chat wrapper can block chat (can't click items) @done (17-12-15 00:54)
- ☐ Find better way for notification sounds. Importing them as blob into a string is a bad idea.
