@@ -3,16 +3,16 @@ import {scope as SettingsScope} from './Settings'
 
 import '../styles/stats-panel.css'
 import appView from '../views/stats-panel.html'
-import dingalingSound from '../sounds/dingaling.mp3'
-import popSound from '../sounds/pop.wav'
-import tingSound from '../sounds/ting.wav'
+// import dingalingSound from '../sounds/dingaling.mp3'
+// import popSound from '../sounds/pop.wav'
+// import tingSound from '../sounds/ting.wav'
 
 import {$template, observable, textNode} from '../../lib/jQTpl'
 
 export let sounds = {
-  dingaling: dingalingSound,
-  pop: popSound,
-  ting: tingSound
+  plucky: 'https://notificationsounds.com/soundfiles/1728efbda81692282ba642aafd57be3a/file-sounds-1101-plucky.wav',
+  openEnded: 'https://notificationsounds.com/soundfiles/8eefcfdf5990e441f0fb6f3fad709e21/file-sounds-1100-open-ended.wav',
+  ping: 'https://notificationsounds.com/soundfiles/4e4b5fbbbb602b6d35bea8460aa8f8e5/file-sounds-1096-light.wav',
 }
 
 function perHour(total, actions) {
@@ -100,7 +100,7 @@ export default {
     }),
     sound: ModuleSetting({
       label: 'Low action sound',
-      default: 'dingaling',
+      default: 'plucky',
       options: Object.keys(sounds)
     }),
     volume: ModuleSetting({
