@@ -91,11 +91,11 @@ export default {
       default: true,
     }),
     lowActions: ModuleSetting({
-      label: 'Low action sound at X actions',
+      label: 'Low action sound at actions remaining',
       default: 10,
       constraint: {
         min: 1,
-        max: 400,
+        max: 100,
       },
     }),
     sound: ModuleSetting({

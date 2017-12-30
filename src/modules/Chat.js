@@ -66,5 +66,5 @@ export default {
 
     value = !!value
     this.$chat[value ? 'addClass' : 'removeClass']('with-tabs')
-  }
+  },
 }

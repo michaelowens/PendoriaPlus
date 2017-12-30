@@ -45,11 +45,9 @@ export default {
       log('[Settings]', 'add module', name)
       scope.modules[name] = modules[name]
     })
-    // scope.modules.push(Object.keys(modules))
   },
 
   addMenuItem () {
-    // let $item = $('<li style="vertical-align: top"><a id="pendoriaplus-button">Pendoria+</a></li>')
     let $item = $('<li><a href="#" id="pendoriaplus-button"> <i class="fa fa-wrench"> </i>Pendoria+</a></li>')
 
     $item.find('a').on('click', this.open.bind(this))
@@ -74,38 +72,6 @@ export default {
       data: scope,
       methods: this.methods,
       // methods: methods
-    })
-    // let settingsTpl = $template(settingsView)
-    // this.$view = settingsTpl(scope, this.$wrapper)
-
-    // this.initViewBindings()
-  },
-
-  initViewBindings () {
-    this.$view.find('.nav-tabs li a').on('click', function (e) {
-      let link = $(e.currentTarget).data('link')
-
-      if (!link) {
-        return
-      }
-
-      scope.tab = link
-    })
-
-    this.$view
-      .tplModel('[name="pendoriaplus_stats_panel_enabled"]', scope.settings.panelEnabled)
-      .tplModel('[name="pendoriaplus_low_action_notification"]', scope.settings.lowActionNotificationEnabled)
-      .tplModel('[name="pendoriaplus_low_action_notification_sound"]', scope.settings.lowActionNotificationSound)
-      .tplModel('[name="pendoriaplus_low_action_notification_volume"]', scope.settings.lowActionNotificationVolume)
-      .tplShow('[data-tab="settings"]', scope.tab, tab => tab === 'settings')
-      .tplShow('[data-tab="about"]', scope.tab, tab => tab === 'about')
-      .tplShow('[data-show="low_action_notification"]', scope.settings.lowActionNotificationEnabled)
-
-    scope._onChange((k, newVal) => {
-      log('[Settings]', 'key', k)
-      if (k === 'settings.lowActionNotificationSound') {
-        StatsPanel.setSound(newVal)
-      }
     })
   },
 }

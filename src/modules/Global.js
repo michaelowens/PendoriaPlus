@@ -13,6 +13,15 @@ export default {
       label: 'Enabled',
       default: true,
     }),
+    colorCodingEnabled: ModuleSetting({
+      label: 'Color-code resources remaining (scraptown, guild buildings)',
+      default: true,
+      onChange (value) {
+        if (this.settings.enabled.value) {
+          this.toggleColorCoding(value)
+        }
+      }
+    }),
   },
 
   init () {
@@ -40,7 +49,10 @@ export default {
     }
 
     this.ranEnable = true
-    this.setEventHandlers()
+
+    if (this.settings.colorCodingEnabled.value) {
+      this.setEventHandlers()
+    }
   },
 
   disable () {
@@ -60,6 +72,15 @@ export default {
   removeEventHandlers () {
     AjaxCallback.off('/guild/buildings', this.ajaxGuildBuildings)
     AjaxCallback.off('/scraptown/details/*', this.ajaxScraptownDetails)
+  },
+
+  toggleColorCoding (value) {
+    if (typeof value == 'undefined') {
+      value = !this.settings.colorCodingEnabled
+    }
+
+    value = !!value
+    this[value ? 'setEventHandlers' : 'removeEventHandlers']()
   },
 
   coloredElement (from, to) {

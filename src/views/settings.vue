@@ -17,7 +17,7 @@
             {{ name }}
           </h2>
           <div v-show="modulesOpened.includes(name) || true">
-            <div v-for="(value, setting) in module.settings" v-if="setting != 'enabled'" style="height: 31px;">
+            <div v-for="(value, setting) in module.settings" v-if="setting != 'enabled'" style="min-height: 31px;">
               <label :for="setting">
                 {{ value.label }}
               </label>

@@ -568,11 +568,20 @@ let observable = function (obj) {
  * Color resources red/green based on if you hit the goal (Guild Buildings & Scraptown)
  */
 
-var VisualResourceStatus = {
+var Global = {
   settings: {
     enabled: ModuleSetting({
       label: 'Enabled',
       default: true,
+    }),
+    colorCodingEnabled: ModuleSetting({
+      label: 'Color-code resources remaining (scraptown, guild buildings)',
+      default: true,
+      onChange (value) {
+        if (this.settings.enabled.value) {
+          this.toggleColorCoding(value);
+        }
+      }
     }),
   },
 
@@ -601,7 +610,10 @@ var VisualResourceStatus = {
     }
 
     this.ranEnable = true;
-    this.setEventHandlers();
+
+    if (this.settings.colorCodingEnabled.value) {
+      this.setEventHandlers();
+    }
   },
 
   disable () {
@@ -621,6 +633,15 @@ var VisualResourceStatus = {
   removeEventHandlers () {
     AjaxCallback.off('/guild/buildings', this.ajaxGuildBuildings);
     AjaxCallback.off('/scraptown/details/*', this.ajaxScraptownDetails);
+  },
+
+  toggleColorCoding (value) {
+    if (typeof value == 'undefined') {
+      value = !this.settings.colorCodingEnabled;
+    }
+
+    value = !!value;
+    this[value ? 'setEventHandlers' : 'removeEventHandlers']();
   },
 
   coloredElement (from, to) {
@@ -681,7 +702,7 @@ var VisualResourceStatus = {
 
 __$styleInject("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.pp_settings_module_header {\n  border-bottom: 1px solid white;\n}\n",undefined);
 
-var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"pp_settings"}},[_c('ul',{staticClass:"nav nav-tabs"},[_c('li',{class:{active: _vm.tab == 'settings'}},[_c('a',{on:{"click":function($event){_vm.tab = 'settings';}}},[_vm._v("Settings")])]),_vm._v(" "),_c('li',{class:{active: _vm.tab == 'about'}},[_c('a',{on:{"click":function($event){_vm.tab = 'about';}}},[_vm._v("About Pendoria+")])])]),_vm._v(" "),_c('div',{staticClass:"tab-game-content"},[(_vm.tab == 'settings')?_c('div',_vm._l((_vm.modulesWithSettings),function(module,name){return _c('div',[_c('h2',{staticClass:"pp_settings_module_header",on:{"click":function($event){_vm.toggleModuleSettings(name);}}},[('enabled' in module.settings)?_c('input',{directives:[{name:"model",rawName:"v-model",value:(module.settings.enabled.value),expression:"module.settings.enabled.value"}],attrs:{"type":"checkbox"},domProps:{"checked":Array.isArray(module.settings.enabled.value)?_vm._i(module.settings.enabled.value,null)>-1:(module.settings.enabled.value)},on:{"change":function($event){var $$a=module.settings.enabled.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(module.settings.enabled.value=$$a.concat([$$v]));}else{$$i>-1&&(module.settings.enabled.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(module.settings.enabled, "value", $$c);}}}}):_vm._e(),_vm._v(" "+_vm._s(name)+" ")]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.modulesOpened.includes(name) || true),expression:"modulesOpened.includes(name) || true"}]},_vm._l((module.settings),function(value,setting){return (setting != 'enabled')?_c('div',{staticStyle:{"height":"31px"}},[_c('label',{attrs:{"for":setting}},[_vm._v(" "+_vm._s(value.label)+" ")]),_vm._v(" "),(value.type == 'checkbox')?_c('input',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting,"type":"checkbox"},domProps:{"checked":Array.isArray(value.value)?_vm._i(value.value,null)>-1:(value.value)},on:{"change":function($event){var $$a=value.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(value.value=$$a.concat([$$v]));}else{$$i>-1&&(value.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(value, "value", $$c);}}}}):_vm._e(),_vm._v(" "),(value.type == 'number')?_c('div',{staticStyle:{"display":"inline-block","width":"40%"}},[_c('input',{directives:[{name:"model",rawName:"v-model.number",value:(value.value),expression:"value.value",modifiers:{"number":true}}],attrs:{"id":setting,"type":"range","min":value.constraint.min,"max":value.constraint.max},domProps:{"value":(value.value)},on:{"__r":function($event){_vm.$set(value, "value", _vm._n($event.target.value));},"blur":function($event){_vm.$forceUpdate();}}}),_vm._v(" "+_vm._s(value.value)+" ")]):_vm._e(),_vm._v(" "),(value.type == 'select')?_c('select',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(value, "value", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);}}},_vm._l((value.options),function(option){return _c('option',{domProps:{"value":option}},[_vm._v(" "+_vm._s(_vm._f("capitalize")(option))+" ")])})):_vm._e(),_vm._v(" "),(setting === 'sound')?_c('button',{on:{"click":_vm.playSound}},[_vm._v("►")]):_vm._e()]):_vm._e()}))])})):_vm._e(),_vm._v(" "),(_vm.tab == 'about')?_c('div',[_vm._m(0),_vm._v(" "),_c('p',[_vm._v(" Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon. ")])]):_vm._e()])])},staticRenderFns: [function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',[_vm._v(" Thanks for using "),_c('strong',[_vm._v("Pendoria+")]),_vm._v("! ")])}],
+var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"pp_settings"}},[_c('ul',{staticClass:"nav nav-tabs"},[_c('li',{class:{active: _vm.tab == 'settings'}},[_c('a',{on:{"click":function($event){_vm.tab = 'settings';}}},[_vm._v("Settings")])]),_vm._v(" "),_c('li',{class:{active: _vm.tab == 'about'}},[_c('a',{on:{"click":function($event){_vm.tab = 'about';}}},[_vm._v("About Pendoria+")])])]),_vm._v(" "),_c('div',{staticClass:"tab-game-content"},[(_vm.tab == 'settings')?_c('div',_vm._l((_vm.modulesWithSettings),function(module,name){return _c('div',[_c('h2',{staticClass:"pp_settings_module_header",on:{"click":function($event){_vm.toggleModuleSettings(name);}}},[('enabled' in module.settings)?_c('input',{directives:[{name:"model",rawName:"v-model",value:(module.settings.enabled.value),expression:"module.settings.enabled.value"}],attrs:{"type":"checkbox"},domProps:{"checked":Array.isArray(module.settings.enabled.value)?_vm._i(module.settings.enabled.value,null)>-1:(module.settings.enabled.value)},on:{"change":function($event){var $$a=module.settings.enabled.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(module.settings.enabled.value=$$a.concat([$$v]));}else{$$i>-1&&(module.settings.enabled.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(module.settings.enabled, "value", $$c);}}}}):_vm._e(),_vm._v(" "+_vm._s(name)+" ")]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.modulesOpened.includes(name) || true),expression:"modulesOpened.includes(name) || true"}]},_vm._l((module.settings),function(value,setting){return (setting != 'enabled')?_c('div',{staticStyle:{"min-height":"31px"}},[_c('label',{attrs:{"for":setting}},[_vm._v(" "+_vm._s(value.label)+" ")]),_vm._v(" "),(value.type == 'checkbox')?_c('input',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting,"type":"checkbox"},domProps:{"checked":Array.isArray(value.value)?_vm._i(value.value,null)>-1:(value.value)},on:{"change":function($event){var $$a=value.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(value.value=$$a.concat([$$v]));}else{$$i>-1&&(value.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(value, "value", $$c);}}}}):_vm._e(),_vm._v(" "),(value.type == 'number')?_c('div',{staticStyle:{"display":"inline-block","width":"40%"}},[_c('input',{directives:[{name:"model",rawName:"v-model.number",value:(value.value),expression:"value.value",modifiers:{"number":true}}],attrs:{"id":setting,"type":"range","min":value.constraint.min,"max":value.constraint.max},domProps:{"value":(value.value)},on:{"__r":function($event){_vm.$set(value, "value", _vm._n($event.target.value));},"blur":function($event){_vm.$forceUpdate();}}}),_vm._v(" "+_vm._s(value.value)+" ")]):_vm._e(),_vm._v(" "),(value.type == 'select')?_c('select',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(value, "value", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);}}},_vm._l((value.options),function(option){return _c('option',{domProps:{"value":option}},[_vm._v(" "+_vm._s(_vm._f("capitalize")(option))+" ")])})):_vm._e(),_vm._v(" "),(setting === 'sound')?_c('button',{on:{"click":_vm.playSound}},[_vm._v("►")]):_vm._e()]):_vm._e()}))])})):_vm._e(),_vm._v(" "),(_vm.tab == 'about')?_c('div',[_vm._m(0),_vm._v(" "),_c('p',[_vm._v(" Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon. ")])]):_vm._e()])])},staticRenderFns: [function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',[_vm._v(" Thanks for using "),_c('strong',[_vm._v("Pendoria+")]),_vm._v("! ")])}],
   filters: {capitalize},
 
   data () {
@@ -776,11 +797,9 @@ var Settings = {
       log('[Settings]', 'add module', name);
       scope$1.modules[name] = modules[name];
     });
-    // scope.modules.push(Object.keys(modules))
   },
 
   addMenuItem () {
-    // let $item = $('<li style="vertical-align: top"><a id="pendoriaplus-button">Pendoria+</a></li>')
     let $item = $('<li><a href="#" id="pendoriaplus-button"> <i class="fa fa-wrench"> </i>Pendoria+</a></li>');
 
     $item.find('a').on('click', this.open.bind(this));
@@ -805,38 +824,6 @@ var Settings = {
       data: scope$1,
       methods: this.methods,
       // methods: methods
-    });
-    // let settingsTpl = $template(settingsView)
-    // this.$view = settingsTpl(scope, this.$wrapper)
-
-    // this.initViewBindings()
-  },
-
-  initViewBindings () {
-    this.$view.find('.nav-tabs li a').on('click', function (e) {
-      let link = $(e.currentTarget).data('link');
-
-      if (!link) {
-        return
-      }
-
-      scope$1.tab = link;
-    });
-
-    this.$view
-      .tplModel('[name="pendoriaplus_stats_panel_enabled"]', scope$1.settings.panelEnabled)
-      .tplModel('[name="pendoriaplus_low_action_notification"]', scope$1.settings.lowActionNotificationEnabled)
-      .tplModel('[name="pendoriaplus_low_action_notification_sound"]', scope$1.settings.lowActionNotificationSound)
-      .tplModel('[name="pendoriaplus_low_action_notification_volume"]', scope$1.settings.lowActionNotificationVolume)
-      .tplShow('[data-tab="settings"]', scope$1.tab, tab => tab === 'settings')
-      .tplShow('[data-tab="about"]', scope$1.tab, tab => tab === 'about')
-      .tplShow('[data-show="low_action_notification"]', scope$1.settings.lowActionNotificationEnabled);
-
-    scope$1._onChange((k, newVal) => {
-      log('[Settings]', 'key', k);
-      if (k === 'settings.lowActionNotificationSound') {
-        StatsPanel.setSound(newVal);
-      }
     });
   },
 };
@@ -933,11 +920,11 @@ var StatsPanel = {
       default: true,
     }),
     lowActions: ModuleSetting({
-      label: 'Low action sound at X actions',
+      label: 'Low action sound at actions remaining',
       default: 10,
       constraint: {
         min: 1,
-        max: 400,
+        max: 100,
       },
     }),
     sound: ModuleSetting({
@@ -1204,7 +1191,7 @@ var Chat = {
 
     value = !!value;
     this.$chat[value ? 'addClass' : 'removeClass']('with-tabs');
-  }
+  },
 };
 
 __$styleInject("#pp_timeRemaining {\r\n  color: #fff;\r\n  margin-right: 10px;\r\n}",undefined);
@@ -1256,7 +1243,6 @@ var Quests = {
     this.ranEnable = false;
 
     this.unbindSocketMessages();
-
     this.removeTimeRemaining();
   },
 
@@ -1319,10 +1305,10 @@ var Quests = {
 
 const modules = {
   AjaxCallback,
-  VisualResourceStatus,
   StatsPanel,
   Chat,
   Quests,
+  Global,
   Settings,
 };
 

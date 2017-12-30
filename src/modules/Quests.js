@@ -49,7 +49,6 @@ export default {
     this.ranEnable = false
 
     this.unbindSocketMessages()
-
     this.removeTimeRemaining()
   },
 

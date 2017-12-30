@@ -13,7 +13,11 @@ PushNotifications:
  ☐ Pushover
  ☐ Chrome/Firefox Notifications (toasts?)
  ☐ Support enabling multiple services
- ☐ Integrate into Quests, Actions, Chat (, Market?)
+ ☐ Integrate into modules:
+   ☐ Quests
+   ☐ Actions
+   ☐ Chat
+   ☐ Market?
 
 Actions:
  ✔ Play sound at (configurable) low remaining count @done (17-12-17 15:58)

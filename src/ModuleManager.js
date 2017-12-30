@@ -1,6 +1,6 @@
 import {log} from './utils'
 import AjaxCallback from './modules/AjaxCallback'
-import VisualResourceStatus from './modules/VisualResourceStatus'
+import Global from './modules/Global'
 import StatsPanel from './modules/StatsPanel'
 import Chat from './modules/Chat'
 import Quests from './modules/Quests'
@@ -8,10 +8,10 @@ import Settings from './modules/Settings'
 
 const modules = {
   AjaxCallback,
-  VisualResourceStatus,
   StatsPanel,
   Chat,
   Quests,
+  Global,
   Settings,
 }
 
