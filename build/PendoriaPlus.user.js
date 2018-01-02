@@ -2,7 +2,7 @@
 // @name         Pendoria+
 // @description  Improve Pendoria with visual enhancements and statistics
 // @namespace    http://pendoria.net/
-// @version      0.5
+// @version      0.6
 // @author       Michael Owens (Xikeon)
 // @match        http://pendoria.net/game
 // @match        https://pendoria.net/game
@@ -10,7 +10,6 @@
 // @match        https://www.pendoria.net/game
 // @grant        none
 // @require      https://unpkg.com/vue@2.5.13/dist/vue.min.js
-// @requireSoonTm      https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js
 // ==/UserScript==
 
 (function () {
@@ -696,7 +695,7 @@ var Global = {
 
 __$styleInject("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.pp_settings_module_header {\n  border-bottom: 1px solid white;\n}\n",undefined);
 
-var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"pp_settings"}},[_c('ul',{staticClass:"nav nav-tabs"},[_c('li',{class:{active: _vm.tab == 'settings'}},[_c('a',{on:{"click":function($event){_vm.tab = 'settings';}}},[_vm._v("Settings")])]),_vm._v(" "),_c('li',{class:{active: _vm.tab == 'about'}},[_c('a',{on:{"click":function($event){_vm.tab = 'about';}}},[_vm._v("About Pendoria+")])])]),_vm._v(" "),_c('div',{staticClass:"tab-game-content"},[(_vm.tab == 'settings')?_c('div',_vm._l((_vm.modulesWithSettings),function(module,name){return _c('div',[_c('h2',{staticClass:"pp_settings_module_header",on:{"click":function($event){_vm.toggleModuleSettings(name);}}},[('enabled' in module.settings)?_c('input',{directives:[{name:"model",rawName:"v-model",value:(module.settings.enabled.value),expression:"module.settings.enabled.value"}],attrs:{"type":"checkbox"},domProps:{"checked":Array.isArray(module.settings.enabled.value)?_vm._i(module.settings.enabled.value,null)>-1:(module.settings.enabled.value)},on:{"change":function($event){var $$a=module.settings.enabled.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(module.settings.enabled.value=$$a.concat([$$v]));}else{$$i>-1&&(module.settings.enabled.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(module.settings.enabled, "value", $$c);}}}}):_vm._e(),_vm._v(" "+_vm._s(name)+" ")]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.modulesOpened.includes(name) || true),expression:"modulesOpened.includes(name) || true"}]},_vm._l((module.settings),function(value,setting){return (setting != 'enabled')?_c('div',{staticStyle:{"min-height":"31px"}},[_c('label',{attrs:{"for":setting}},[_vm._v(" "+_vm._s(value.label)+" ")]),_vm._v(" "),(value.type == 'checkbox')?_c('input',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting,"type":"checkbox"},domProps:{"checked":Array.isArray(value.value)?_vm._i(value.value,null)>-1:(value.value)},on:{"change":function($event){var $$a=value.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(value.value=$$a.concat([$$v]));}else{$$i>-1&&(value.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(value, "value", $$c);}}}}):_vm._e(),_vm._v(" "),(value.type == 'number')?_c('div',{staticStyle:{"display":"inline-block","width":"40%"}},[_c('input',{directives:[{name:"model",rawName:"v-model.number",value:(value.value),expression:"value.value",modifiers:{"number":true}}],attrs:{"id":setting,"type":"range","min":value.constraint.min,"max":value.constraint.max},domProps:{"value":(value.value)},on:{"__r":function($event){_vm.$set(value, "value", _vm._n($event.target.value));},"blur":function($event){_vm.$forceUpdate();}}}),_vm._v(" "+_vm._s(value.value)+" ")]):_vm._e(),_vm._v(" "),(value.type == 'select')?_c('select',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(value, "value", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);}}},_vm._l((value.options),function(option){return _c('option',{domProps:{"value":option}},[_vm._v(" "+_vm._s(_vm._f("capitalize")(option))+" ")])})):_vm._e(),_vm._v(" "),(setting === 'sound')?_c('button',{on:{"click":_vm.playSound}},[_vm._v("►")]):_vm._e()]):_vm._e()}))])})):_vm._e(),_vm._v(" "),(_vm.tab == 'about')?_c('div',[_vm._m(0),_vm._v(" "),_c('p',[_vm._v(" Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon. ")])]):_vm._e()])])},staticRenderFns: [function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',[_vm._v(" Thanks for using "),_c('strong',[_vm._v("Pendoria+")]),_vm._v("! ")])}],
+var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"pp_settings"}},[_c('ul',{staticClass:"nav nav-tabs"},[_c('li',{class:{active: _vm.tab == 'settings'}},[_c('a',{on:{"click":function($event){_vm.tab = 'settings';}}},[_vm._v("Settings")])]),_vm._v(" "),_c('li',{class:{active: _vm.tab == 'about'}},[_c('a',{on:{"click":function($event){_vm.tab = 'about';}}},[_vm._v("About Pendoria+")])])]),_vm._v(" "),_c('div',{staticClass:"tab-game-content"},[(_vm.tab == 'settings')?_c('div',[_vm._l((_vm.modulesWithSettings),function(module,name){return _c('div',[_c('h2',{staticClass:"pp_settings_module_header",on:{"click":function($event){_vm.toggleModuleSettings(name);}}},[('enabled' in module.settings)?_c('input',{directives:[{name:"model",rawName:"v-model",value:(module.settings.enabled.value),expression:"module.settings.enabled.value"}],attrs:{"type":"checkbox"},domProps:{"checked":Array.isArray(module.settings.enabled.value)?_vm._i(module.settings.enabled.value,null)>-1:(module.settings.enabled.value)},on:{"click":function($event){_vm.toggleModule(name, $event);},"change":function($event){var $$a=module.settings.enabled.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(module.settings.enabled.value=$$a.concat([$$v]));}else{$$i>-1&&(module.settings.enabled.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(module.settings.enabled, "value", $$c);}}}}):_vm._e(),_vm._v(" "+_vm._s(name)+" ")]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.modulesOpened.includes(name) || true),expression:"modulesOpened.includes(name) || true"}]},_vm._l((module.settings),function(value,setting){return (setting != 'enabled')?_c('div',{staticStyle:{"min-height":"31px"}},[_c('label',{attrs:{"for":setting}},[_vm._v(" "+_vm._s(value.label)+" ")]),_vm._v(" "),(value.type == 'checkbox')?_c('input',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting,"type":"checkbox"},domProps:{"checked":Array.isArray(value.value)?_vm._i(value.value,null)>-1:(value.value)},on:{"change":function($event){var $$a=value.value,$$el=$event.target,$$c=$$el.checked?(true):(false);if(Array.isArray($$a)){var $$v=null,$$i=_vm._i($$a,$$v);if($$el.checked){$$i<0&&(value.value=$$a.concat([$$v]));}else{$$i>-1&&(value.value=$$a.slice(0,$$i).concat($$a.slice($$i+1)));}}else{_vm.$set(value, "value", $$c);}}}}):_vm._e(),_vm._v(" "),(value.type == 'number')?_c('div',{staticStyle:{"display":"inline-block","width":"40%"}},[_c('input',{directives:[{name:"model",rawName:"v-model.number",value:(value.value),expression:"value.value",modifiers:{"number":true}}],attrs:{"id":setting,"type":"range","min":value.constraint.min,"max":value.constraint.max},domProps:{"value":(value.value)},on:{"__r":function($event){_vm.$set(value, "value", _vm._n($event.target.value));},"blur":function($event){_vm.$forceUpdate();}}}),_vm._v(" "+_vm._s(value.value)+" ")]):_vm._e(),_vm._v(" "),(value.type == 'select')?_c('select',{directives:[{name:"model",rawName:"v-model",value:(value.value),expression:"value.value"}],attrs:{"id":setting},on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.$set(value, "value", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);}}},_vm._l((value.options),function(option){return _c('option',{domProps:{"value":option}},[_vm._v(" "+_vm._s(_vm._f("capitalize")(option))+" ")])})):_vm._e(),_vm._v(" "),(setting === 'sound')?_c('button',{on:{"click":_vm.playSound}},[_vm._v("►")]):_vm._e()]):_vm._e()}))])}),_vm._v(" "),_c('button',{on:{"click":_vm.saveSettings}},[_vm._v("Save settings")])],2):_vm._e(),_vm._v(" "),(_vm.tab == 'about')?_c('div',[_vm._m(0),_vm._v(" "),_c('p',[_vm._v(" Pendoria+ is a combination of visual improvements and enhancements to the overal Pendoria experience. Created by Xikeon. ")])]):_vm._e()])])},staticRenderFns: [function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',[_vm._v(" Thanks for using "),_c('strong',[_vm._v("Pendoria+")]),_vm._v("! ")])}],
   filters: {capitalize},
 
   data () {
@@ -713,31 +712,24 @@ var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;va
     }
   },
 
-  watch: {
-    modules: {
-      handler (modules, key) {
-        // very lazy way of doing this...
-        Object.keys(this.modules).forEach(name => {
-          if (!('settings' in this.modules[name]) || !('enabled' in this.modules[name].settings)) {
-            return
-          }
-
-          if (this.modules[name].settings.enabled.value) {
-            setTimeout(() => {
-              this.modules[name].enable();
-            }, 100);
-          } else {
-            this.$nextTick(() => {
-              this.modules[name].disable();
-            });
-          }
-        });
-      },
-      deep: true
-    }
-  },
-
   methods: {
+    toggleModule (name, value) {
+      // Note: this couldn't be a deep watcher due to Vue internally giving a stack overflow
+      if (value instanceof MouseEvent) {
+        value = value.target.checked;
+      }
+
+      if (value) {
+        setTimeout(() => {
+          this.modules[name].enable();
+        }, 50);
+      } else {
+        this.$nextTick(() => {
+          this.modules[name].disable();
+        });
+      }
+    },
+
     toggleModuleSettings (name) {
       return
       const idx = this.modulesOpened.indexOf(name);
@@ -746,6 +738,10 @@ var settingsView = {render: function(){var _vm=this;var _h=_vm.$createElement;va
       } else {
         this.modulesOpened.push(name);
       }
+    },
+
+    saveSettings () {
+      ModuleManager.saveSettings();
     }
   }
 };
@@ -825,7 +821,7 @@ var Settings = {
 
 __$styleInject("#pendoriaplus_stats {\r\n  position: relative;\r\n  background: rgba(0, 0, 0, .8);\r\n  color: #fff;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n.pendoriaplus_stats_content {\r\n  padding: 15px 15px 15px 15px;\r\n}\r\n\r\n.pendoriaplus_stats_content label {\r\n  margin: 0;\r\n}",undefined);
 
-var appView = "<div>\r\n  <div class=\"frame frame-vertical-left\"></div>\r\n  <div class=\"frame frame-vertical-right\"></div>\r\n  <div class=\"frame frame-horizontal-top\"></div>\r\n  <div class=\"frame frame-horizontal-bottom\"></div>\r\n  <div class=\"frame frame-top-left\"></div>\r\n  <div class=\"frame frame-top-right\"></div>\r\n  <div class=\"frame frame-bottom-right\"></div>\r\n  <div class=\"frame frame-bottom-left\"></div>\r\n  <div class=\"pendoriaplus_stats_content\">\r\n    <div><a href=\"#\" class=\"pendoriaplus_reset_stats\">Reset</a></div>\r\n\r\n    <div>\r\n      <label>Actions:</label>\r\n      {{stats.actions|toLocaleString}}\r\n    </div>\r\n    <div>\r\n      <label>Exp gained:</label>\r\n      {{stats.exp|toLocaleString}}\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_battle\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Win / Loss:</label>\r\n        {{stats.wins|toLocaleString}} / {{stats.losses|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold gained:</label>\r\n        {{stats.gold|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold p/h:</label>\r\n        {{goldPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_ts\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Quint procs:</label>\r\n        {{stats.quints|toLocaleString}} ({{quintsPercentage}}%)\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}} gained:</label>\r\n        {{stats.resources|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}}/h:</label>\r\n        {{resourcesPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>";
+var appView = "<div>\r\n  <div class=\"frame frame-vertical-left\"></div>\r\n  <div class=\"frame frame-vertical-right\"></div>\r\n  <div class=\"frame frame-horizontal-top\"></div>\r\n  <div class=\"frame frame-horizontal-bottom\"></div>\r\n  <div class=\"frame frame-top-left\"></div>\r\n  <div class=\"frame frame-top-right\"></div>\r\n  <div class=\"frame frame-bottom-right\"></div>\r\n  <div class=\"frame frame-bottom-left\"></div>\r\n  <div class=\"pendoriaplus_stats_content\">\r\n    <div><a href=\"#\" class=\"pendoriaplus_reset_stats\">Reset</a></div>\r\n\r\n    <div>\r\n      <label>Actions:</label>\r\n      {{stats.actions|toLocaleString}}\r\n    </div>\r\n    <div>\r\n      <label>Exp gained:</label>\r\n      {{stats.exp|toLocaleString}}\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_battle\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Win / Loss:</label>\r\n        {{stats.wins|toLocaleString}} / {{stats.losses|toLocaleString}} ({{winPercentage}}%)\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold gained:</label>\r\n        {{stats.gold|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold p/h:</label>\r\n        {{goldPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_ts\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Quint procs:</label>\r\n        {{stats.quints|toLocaleString}} ({{quintsPercentage}}%)\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}} gained:</label>\r\n        {{stats.resources|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}}/h:</label>\r\n        {{resourcesPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>";
 
 // import dingalingSound from '../sounds/dingaling.mp3'
 // import popSound from '../sounds/pop.wav'
@@ -855,6 +851,13 @@ let scope$$1 = observable({
     resources: 1,
   },
   resetStatsDate: +new Date(),
+  winPercentage (data) {
+    const totalBattles = data.stats.wins + data.stats.losses;
+    if (totalBattles === 0) {
+      return 0
+    }
+    return (100 / totalBattles * data.stats.wins).toFixed(2)
+  },
   quintsPercentage (data) {
     if (data.stats.actions === 0 || data.stats.quints === 0) {
       return 0
@@ -1366,6 +1369,43 @@ var ModuleManager = {
     log('[ModuleManager]', 'init');
   },
 
+  saveSettings () {
+    log('[ModuleManager]', 'saveSettings');
+    let settings = {};
+    Object.keys(modules).forEach(moduleName => {
+      if ('settings' in modules[moduleName]) {
+        settings[moduleName] = {};
+
+        let moduleSettings = modules[moduleName].settings;
+        Object.keys(moduleSettings).forEach(settingName => {
+          settings[moduleName][settingName] = moduleSettings[settingName].value;
+        });
+      }
+    });
+
+    localStorage.setItem('PendoriaPlus', JSON.stringify(settings));
+  },
+
+  loadSettings () {
+    let settings = localStorage.getItem('PendoriaPlus');
+
+    if (settings) {
+      log('[ModuleManager]', 'Loading settings');
+      try {
+        settings = JSON.parse(settings);
+        log('[ModuleManager]', settings);
+        Object.keys(settings).forEach(moduleName => {
+          const moduleSettings = settings[moduleName];
+          Object.keys(moduleSettings).forEach(settingName => {
+            modules[moduleName].settings[settingName].value = moduleSettings[settingName];
+          });
+        });
+      } catch (e) {
+        log('[ModuleManager]', 'Error loading settings:', e.toString());
+      }
+    }
+  },
+
   get (name = '') {
     if (!name) {
       return modules
@@ -1407,6 +1447,8 @@ var PendoriaPlus = {
   },
 
   initModules () {
+    ModuleManager.loadSettings();
+
     Object.values(ModuleManager.get())
       .forEach(module => {
         if ('settings' in module) {

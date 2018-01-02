@@ -15,6 +15,8 @@ export default {
   },
 
   initModules () {
+    ModuleManager.loadSettings()
+
     Object.values(ModuleManager.get())
       .forEach(module => {
         if ('settings' in module) {

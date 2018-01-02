@@ -41,8 +41,12 @@ Chat:
  ✔ Move channels to top/bottom of chat and turn into tabs @done (17-12-15 01:05)
 
 Improvements:
- ☐ Save config to localstorage
+ ✔ Save config to localstorage @done (18-01-02 13:56)
  ☐ Improve settings access, so you don't have to add .value everywhere
+ ☐ win% for battlers
+ ☐ Show time to next level (expToLevel?)
+ ☐ Add option to repeat low notification sound (every time < lowActions and when run out every 6 seconds)
+ ☐ Custom notification sound (file input => blob => audio?)
  ✔ Configure settings per module and build UI automatically @done (17-12-30 20:38)
  ✔ Improve access to data between modules (e.g. for accessing/sharing settings between modules) @done (17-12-30 20:38)
  ✔ Implement a Module manager @done (17-12-30 20:38)
@@ -50,7 +54,7 @@ Improvements:
    ✔ Handle getting/setting module settings @done (17-12-30 20:38)
 
 Bugs:
- ☐ Find better way for notification sounds. Importing them as blob into a string is a bad idea.
+ ✔ Find better way for notification sounds. Importing them as blob into a string is a bad idea. @done (18-01-02 13:56)
  ✔ Chat resizes incorrectly to smaller resolutions @done (17-12-15 00:37)
  ✔ Puls3: Xikeon, The Penndoria+ button moves over the buttons and moves the Users Online button into my chat :p @done (17-12-15 01:03)
  ✔ Chat wrapper can block chat (can't click items) @done (17-12-15 00:54)

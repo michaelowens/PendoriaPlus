@@ -13,7 +13,7 @@
       <div v-if="tab == 'settings'">
         <div v-for="(module, name) in modulesWithSettings">
           <h2 class="pp_settings_module_header" @click="toggleModuleSettings(name)">
-            <input v-if="'enabled' in module.settings" type="checkbox" v-model="module.settings.enabled.value">
+            <input v-if="'enabled' in module.settings" type="checkbox" v-model="module.settings.enabled.value" @click="toggleModule(name, $event)">
             {{ name }}
           </h2>
           <div v-show="modulesOpened.includes(name) || true">
@@ -36,6 +36,8 @@
             </div>
           </div>
         </div>
+
+        <button @click="saveSettings">Save settings</button>
 
         <!-- <label>
           <input type="checkbox" name="pendoriaplus_stats_panel_enabled">
@@ -79,6 +81,7 @@
 
 <script>
   import {capitalize} from '../utils'
+  import ModuleManager from '../ModuleManager'
 
   export default {
     filters: {capitalize},
@@ -97,31 +100,24 @@
       }
     },
 
-    watch: {
-      modules: {
-        handler (modules, key) {
-          // very lazy way of doing this...
-          Object.keys(this.modules).forEach(name => {
-            if (!('settings' in this.modules[name]) || !('enabled' in this.modules[name].settings)) {
-              return
-            }
-
-            if (this.modules[name].settings.enabled.value) {
-              setTimeout(() => {
-                this.modules[name].enable()
-              }, 100)
-            } else {
-              this.$nextTick(() => {
-                this.modules[name].disable()
-              })
-            }
-          })
-        },
-        deep: true
-      }
-    },
-
     methods: {
+      toggleModule (name, value) {
+        // Note: this couldn't be a deep watcher due to Vue internally giving a stack overflow
+        if (value instanceof MouseEvent) {
+          value = value.target.checked
+        }
+
+        if (value) {
+          setTimeout(() => {
+            this.modules[name].enable()
+          }, 50)
+        } else {
+          this.$nextTick(() => {
+            this.modules[name].disable()
+          })
+        }
+      },
+
       toggleModuleSettings (name) {
         return
         const idx = this.modulesOpened.indexOf(name)
@@ -130,6 +126,10 @@
         } else {
           this.modulesOpened.push(name)
         }
+      },
+
+      saveSettings () {
+        ModuleManager.saveSettings()
       }
     }
   }

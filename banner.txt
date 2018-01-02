@@ -2,7 +2,7 @@
 // @name         Pendoria+
 // @description  Improve Pendoria with visual enhancements and statistics
 // @namespace    http://pendoria.net/
-// @version      0.5
+// @version      0.6
 // @author       Michael Owens (Xikeon)
 // @match        http://pendoria.net/game
 // @match        https://pendoria.net/game
@@ -10,5 +10,4 @@
 // @match        https://www.pendoria.net/game
 // @grant        none
 // @require      https://unpkg.com/vue@2.5.13/dist/vue.js
-// @requireSoonTm      https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js
 // ==/UserScript==

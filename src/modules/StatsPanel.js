@@ -33,6 +33,13 @@ export let scope = observable({
     resources: 1,
   },
   resetStatsDate: +new Date(),
+  winPercentage (data) {
+    const totalBattles = data.stats.wins + data.stats.losses
+    if (totalBattles === 0) {
+      return 0
+    }
+    return (100 / totalBattles * data.stats.wins).toFixed(2)
+  },
   quintsPercentage (data) {
     if (data.stats.actions === 0 || data.stats.quints === 0) {
       return 0
