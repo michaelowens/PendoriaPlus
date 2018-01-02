@@ -74,6 +74,28 @@ function guessType (setting) {
   return type
 }
 
+function secondsToString (sec_num) {
+  let hours   = Math.floor(sec_num / 3600);
+  let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+  let seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+  let str = '';
+  if (hours > 0) {
+    if (hours < 10) hours = '0' + hours;
+    str += hours + 'h';
+  }
+
+  if (hours > 0 || minutes > 0) {
+    if (minutes < 10) minutes = '0' + minutes;
+    str += minutes + 'm';
+  }
+
+  if (seconds < 10) seconds = '0' + seconds;
+  str += seconds + 's';
+
+  return str
+}
+
 function ModuleSetting (setting) {
   const defaults = {
     type: guessType(setting),
@@ -557,6 +579,12 @@ let observable = function (obj) {
   return p
 };
 
+// return {
+//   $template: $template,
+//   observable: observable,
+//   textNode: (text) => document.createTextNode(text)
+// }
+
 /**
  * Color resources red/green based on if you hit the goal (Guild Buildings & Scraptown)
  */
@@ -896,6 +924,17 @@ var StatsPanel = {
       label: 'Enabled',
       default: true,
     }),
+    timeToLevel: ModuleSetting({
+      label: 'Show estimated time to next level',
+      default: true,
+      onChange (value) {
+        if (!this.settings.enabled.value) {
+          return
+        }
+
+        this.$nextLevel.toggle(value);
+      }
+    }),
     panelEnabled: ModuleSetting({
       label: 'Show panel under mini profile',
       default: true,
@@ -916,7 +955,7 @@ var StatsPanel = {
       default: 500,
       constraint: {
         min: 1,
-        max: 500,
+        max: 100,
       },
     }),
     lowActionRepeat: ModuleSetting({
@@ -945,6 +984,8 @@ var StatsPanel = {
     this.ranEnable = false;
     this.soundTimeout = null;
 
+    this.$nextLevel = $('<div style="text-align: center; margin-top: 3px;"></div>').insertAfter('#exp');
+
     this.onTradeskillData = this.onTradeskillData.bind(this);
     this.onBattleData = this.onBattleData.bind(this);
 
@@ -964,6 +1005,8 @@ var StatsPanel = {
     this.initPanel();
     this.setSound(this.settings.sound.value);
     this.setVolume(this.settings.volume.value);
+
+    this.$nextLevel.toggle(this.settings.timeToLevel.value);
   },
 
   disable () {
@@ -976,6 +1019,7 @@ var StatsPanel = {
     this.unbindSocketMessages();
     this.removePanel();
     this.removeSound();
+    this.$nextLevel.toggle(false);
   },
 
   bindSocketMessages () {
@@ -1064,8 +1108,7 @@ var StatsPanel = {
       this.soundTimeout = null;
     }
 
-    // TODO: improve check so if it skips a number magically, it will still play
-    log('[StatsPanel]', 'lowActions', data.actionsRemaining, '===', this.settings.lowActions.value, data.actionsRemaining === this.settings.lowActions.value);
+    // TODO: improve check so if it skips a number magically, it will still play?
     if (data.actionsRemaining === this.settings.lowActions.value ||
       (this.settings.lowActionRepeat.value && data.actionsRemaining <= this.settings.lowActions.value)) {
       this.playSound();
@@ -1079,13 +1122,12 @@ var StatsPanel = {
   },
 
   onTradeskillData (data) {
-    log('[StatsPanel]', 'got tradeskill data', data);
-
     if (scope$$1.type !== 'tradeskill') {
       this.resetStats();
     }
 
     this.checkActionsRemaining(data);
+    this.calculateTimeToLevel(data);
 
     scope$$1.type = 'tradeskill';
     scope$$1.skill = data.skill;
@@ -1102,13 +1144,12 @@ var StatsPanel = {
   },
 
   onBattleData (data) {
-    log('[StatsPanel]', 'got battle data', data);
-
     if (scope$$1.type !== 'battle') {
       this.resetStats();
     }
 
     this.checkActionsRemaining(data);
+    this.calculateTimeToLevel(data);
 
     scope$$1.type = 'battle';
     scope$$1.stats.actions += 1;
@@ -1123,6 +1164,17 @@ var StatsPanel = {
       scope$$1.stats.gold += data.gainedgold;
       scope$$1.stats.exp += data.gainedexp;
     }
+  },
+
+  calculateTimeToLevel (data) {
+    if (!this.settings.timeToLevel.value) {
+      return
+    }
+
+    const timeToLevel = secondsToString(Math.round((data.expToLevel / data.gainedExp) * 6));
+    setTimeout(() => {
+      this.$nextLevel.text(`Next level: ${timeToLevel}`);
+    }, 10);
   },
 
   resetStats () {
@@ -1339,23 +1391,7 @@ var Quests = {
 
   setRemainingTime (actions) {
     const sec_num = actions * 6;
-    let hours   = Math.floor(sec_num / 3600);
-    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    let seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-    let str = '';
-    if (hours > 0) {
-      if (hours < 10) hours = '0' + hours;
-      str += hours + 'h';
-    }
-
-    if (hours > 0 || minutes > 0) {
-      if (minutes < 10) minutes = '0' + minutes;
-      str += minutes + 'm';
-    }
-
-    if (seconds < 10) seconds = '0' + seconds;
-    str += seconds + 's';
+    const str = secondsToString(sec_num);
 
     log('[Quests]', 'setRemainingTime', actions, str);
     this.$timeRemaining.text(str ? `(${str})` : '');
@@ -1478,7 +1514,6 @@ var PendoriaPlus = {
   }
 };
 
-// TODO: maybe check/wait for jQuery in case script loads too early
 $(function () {
   if (!window.hasPendoriaPlus) {
     window.hasPendoriaPlus = true;

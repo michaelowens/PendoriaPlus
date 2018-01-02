@@ -1,4 +1,4 @@
-import {log, capitalize, ModuleSetting} from '../utils'
+import {log, capitalize, secondsToString, ModuleSetting} from '../utils'
 import {scope as SettingsScope} from './Settings'
 
 import '../styles/stats-panel.css'
@@ -78,6 +78,17 @@ export default {
       label: 'Enabled',
       default: true,
     }),
+    timeToLevel: ModuleSetting({
+      label: 'Show estimated time to next level',
+      default: true,
+      onChange (value) {
+        if (!this.settings.enabled.value) {
+          return
+        }
+
+        this.$nextLevel.toggle(value)
+      }
+    }),
     panelEnabled: ModuleSetting({
       label: 'Show panel under mini profile',
       default: true,
@@ -127,6 +138,8 @@ export default {
     this.ranEnable = false
     this.soundTimeout = null
 
+    this.$nextLevel = $('<div style="text-align: center; margin-top: 3px;"></div>').insertAfter('#exp')
+
     this.onTradeskillData = this.onTradeskillData.bind(this)
     this.onBattleData = this.onBattleData.bind(this)
 
@@ -146,6 +159,8 @@ export default {
     this.initPanel()
     this.setSound(this.settings.sound.value)
     this.setVolume(this.settings.volume.value)
+
+    this.$nextLevel.toggle(this.settings.timeToLevel.value)
   },
 
   disable () {
@@ -158,6 +173,7 @@ export default {
     this.unbindSocketMessages()
     this.removePanel()
     this.removeSound()
+    this.$nextLevel.toggle(false)
   },
 
   bindSocketMessages () {
@@ -260,13 +276,12 @@ export default {
   },
 
   onTradeskillData (data) {
-    log('[StatsPanel]', 'got tradeskill data', data)
-
     if (scope.type !== 'tradeskill') {
       this.resetStats()
     }
 
     this.checkActionsRemaining(data)
+    this.calculateTimeToLevel(data)
 
     scope.type = 'tradeskill'
     scope.skill = data.skill
@@ -283,13 +298,12 @@ export default {
   },
 
   onBattleData (data) {
-    log('[StatsPanel]', 'got battle data', data)
-
     if (scope.type !== 'battle') {
       this.resetStats()
     }
 
     this.checkActionsRemaining(data)
+    this.calculateTimeToLevel(data)
 
     scope.type = 'battle'
     scope.stats.actions += 1
@@ -304,6 +318,17 @@ export default {
       scope.stats.gold += data.gainedgold
       scope.stats.exp += data.gainedexp
     }
+  },
+
+  calculateTimeToLevel (data) {
+    if (!this.settings.timeToLevel.value) {
+      return
+    }
+
+    const timeToLevel = secondsToString(Math.round((data.expToLevel / data.gainedExp) * 6))
+    setTimeout(() => {
+      this.$nextLevel.text(`Next level: ${timeToLevel}`)
+    }, 10)
   },
 
   resetStats () {
