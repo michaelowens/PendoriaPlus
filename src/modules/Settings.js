@@ -9,12 +9,6 @@ import '../styles/settings.css'
 const defaultScope = {
   test_version: '0.1',
   modules: {},
-  settings: {
-    panelEnabled: true,
-    lowActionNotificationEnabled: true,
-    lowActionNotificationSound: 'dingaling',
-    lowActionNotificationVolume: 50
-  },
   tab: 'settings',
   text: '',
   radio: '',
@@ -57,6 +51,13 @@ export default {
   },
 
   open () {
+    if (this.vm) {
+      this.vm.$destroy()
+      this.vm = null
+      setTimeout(this.open.bind(this), 1) // give Vue time to destroy
+      return
+    }
+
     this.$wrapper = $('<div id="pendoriaplus_settings"></div>')
     $('#gameframe-battle').hide()
     $('#gameframe-content').show().html(this.$wrapper)
@@ -66,7 +67,7 @@ export default {
 
   initView () {
     const ViewCtor = Vue.extend(settingsView)
-    const ViewInstance = new ViewCtor({
+    this.vm = new ViewCtor({
       el: this.$wrapper[0],
       // template: settingsView,
       data: scope,

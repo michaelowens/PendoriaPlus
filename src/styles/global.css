@@ -2,6 +2,21 @@
   width: 80%;
 }
 
+.pp_chat_side_by_side #content
+{
+  right: auto;
+  width: 60%;
+  height: 90%;
+}
+
+.pp_chat_side_by_side #chat
+{
+  left: auto;
+  width: 42%;
+  height: 94%;
+  top: 60px;
+}
+
 @media only screen and (max-width: 980px) {
   #gameframe-menu li a {
     font-size: 12px;

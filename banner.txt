@@ -2,7 +2,7 @@
 // @name         Pendoria+
 // @description  Improve Pendoria with visual enhancements and statistics
 // @namespace    http://pendoria.net/
-// @version      0.4
+// @version      0.5
 // @author       Michael Owens (Xikeon)
 // @match        http://pendoria.net/game
 // @match        https://pendoria.net/game

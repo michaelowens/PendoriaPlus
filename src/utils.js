@@ -1,4 +1,4 @@
-export let debug = true
+export let debug = false
 
 export function log() {
   if (!debug) {

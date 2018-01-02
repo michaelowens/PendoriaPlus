@@ -35,6 +35,8 @@ Guild Management:
  ☐ Show best building upgrade value
 
 Chat:
+ ✔ Enabling Chat module shouldn't do anything from the start, making it smaller should be an extra setting @done (18-01-02 12:32)
+ ✔ Add option to get side-by-side view instead (https://userstyles.org/styles/152288/pendoria-side-by-side) @done (18-01-02 12:32)
  ✔ Make same size as content (give menu more space) @done (17-12-15 00:40)
  ✔ Move channels to top/bottom of chat and turn into tabs @done (17-12-15 01:05)
 

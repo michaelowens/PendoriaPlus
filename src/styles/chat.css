@@ -18,18 +18,18 @@
   pointer-events: all;
 }
 
-#chat_wrapper #chat.with-tabs #chat-content {
+/* Not so much an aside anymore, is it */
+#chat.with-tabs #chat-content {
   width: 100%;
   margin: 0;
 }
 
-/* Not so much an aside anymore, is it */
-#chat_wrapper #chat.with-tabs .wrapper {
+#chat.with-tabs .wrapper {
   display: grid;
   grid-template-rows: min-content auto;
 }
 
-#chat_wrapper #chat.with-tabs aside {
+#chat.with-tabs aside {
   float: none;
   overflow: hidden;
   height: auto;
@@ -37,12 +37,12 @@
   padding: 10px 0px 0 0;
 }
 
-#chat_wrapper #chat.with-tabs aside ul {
+#chat.with-tabs aside ul {
   float: left;
   margin: 0;
 }
 
-#chat_wrapper #chat.with-tabs aside li {
+#chat.with-tabs aside li {
   display: inline-block;
   margin-right: 10px;
 }

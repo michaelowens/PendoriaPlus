@@ -2,14 +2,14 @@
 // @name         Pendoria+
 // @description  Improve Pendoria with visual enhancements and statistics
 // @namespace    http://pendoria.net/
-// @version      0.4
+// @version      0.5
 // @author       Michael Owens (Xikeon)
 // @match        http://pendoria.net/game
 // @match        https://pendoria.net/game
 // @match        http://www.pendoria.net/game
 // @match        https://www.pendoria.net/game
 // @grant        none
-// @require      https://unpkg.com/vue@2.5.13/dist/vue.js
+// @require      https://unpkg.com/vue@2.5.13/dist/vue.min.js
 // @requireSoonTm      https://cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js
 // ==/UserScript==
 
@@ -34,7 +34,7 @@ function __$styleInject(css, returnValue) {
 
 function __$strToBlobUri(str, mime, isBinary) {try {return window.URL.createObjectURL(new Blob([Uint8Array.from(str.split('').map(function(c) {return c.charCodeAt(0)}))], {type: mime}));} catch (e) {return "data:" + mime + (isBinary ? ";base64," : ",") + str;}}
 
-let debug = true;
+let debug = false;
 
 function log() {
   if (!debug) {
@@ -558,12 +558,6 @@ let observable = function (obj) {
   return p
 };
 
-// return {
-//   $template: $template,
-//   observable: observable,
-//   textNode: (text) => document.createTextNode(text)
-// }
-
 /**
  * Color resources red/green based on if you hit the goal (Guild Buildings & Scraptown)
  */
@@ -761,12 +755,6 @@ __$styleInject("#pp_settings label {\r\n  width: 50%;\r\n  max-width: 40%;\r\n  
 const defaultScope = {
   test_version: '0.1',
   modules: {},
-  settings: {
-    panelEnabled: true,
-    lowActionNotificationEnabled: true,
-    lowActionNotificationSound: 'dingaling',
-    lowActionNotificationVolume: 50
-  },
   tab: 'settings',
   text: '',
   radio: '',
@@ -809,6 +797,13 @@ var Settings = {
   },
 
   open () {
+    if (this.vm) {
+      this.vm.$destroy();
+      this.vm = null;
+      setTimeout(this.open.bind(this), 1); // give Vue time to destroy
+      return
+    }
+
     this.$wrapper = $('<div id="pendoriaplus_settings"></div>');
     $('#gameframe-battle').hide();
     $('#gameframe-content').show().html(this.$wrapper);
@@ -818,7 +813,7 @@ var Settings = {
 
   initView () {
     const ViewCtor = Vue.extend(settingsView);
-    const ViewInstance = new ViewCtor({
+    this.vm = new ViewCtor({
       el: this.$wrapper[0],
       // template: settingsView,
       data: scope$1,
@@ -830,7 +825,7 @@ var Settings = {
 
 __$styleInject("#pendoriaplus_stats {\r\n  position: relative;\r\n  background: rgba(0, 0, 0, .8);\r\n  color: #fff;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n.pendoriaplus_stats_content {\r\n  padding: 15px 15px 15px 15px;\r\n}\r\n\r\n.pendoriaplus_stats_content label {\r\n  margin: 0;\r\n}",undefined);
 
-var appView = "<div>\r\n  <div class=\"frame frame-vertical-left\"></div>\r\n  <div class=\"frame frame-vertical-right\"></div>\r\n  <div class=\"frame frame-horizontal-top\"></div>\r\n  <div class=\"frame frame-horizontal-bottom\"></div>\r\n  <div class=\"frame frame-top-left\"></div>\r\n  <div class=\"frame frame-top-right\"></div>\r\n  <div class=\"frame frame-bottom-right\"></div>\r\n  <div class=\"frame frame-bottom-left\"></div>\r\n  <div class=\"pendoriaplus_stats_content\">\r\n    <div><a href=\"#\" class=\"pendoriaplus_reset_stats\">Reset</a></div>\r\n\r\n    <div>\r\n      <label>Actions:</label>\r\n      {{stats.actions|toLocaleString}}\r\n    </div>\r\n    <div>\r\n      <label>Exp gained:</label>\r\n      {{stats.exp|toLocaleString}}\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_battle\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Win / Loss:</label>\r\n        {{stats.wins|toLocaleString}} / {{stats.losses|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold gained:</label>\r\n        {{stats.gold|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold p/h:</label>\r\n        {{goldPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_ts\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Quint procs:</label>\r\n        {{stats.quints|toLocaleString}} ({{quintsPercentage}}%)\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}} gained:</label>\r\n        {{stats.resources|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}} p/h:</label>\r\n        {{resourcesPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>";
+var appView = "<div>\r\n  <div class=\"frame frame-vertical-left\"></div>\r\n  <div class=\"frame frame-vertical-right\"></div>\r\n  <div class=\"frame frame-horizontal-top\"></div>\r\n  <div class=\"frame frame-horizontal-bottom\"></div>\r\n  <div class=\"frame frame-top-left\"></div>\r\n  <div class=\"frame frame-top-right\"></div>\r\n  <div class=\"frame frame-bottom-right\"></div>\r\n  <div class=\"frame frame-bottom-left\"></div>\r\n  <div class=\"pendoriaplus_stats_content\">\r\n    <div><a href=\"#\" class=\"pendoriaplus_reset_stats\">Reset</a></div>\r\n\r\n    <div>\r\n      <label>Actions:</label>\r\n      {{stats.actions|toLocaleString}}\r\n    </div>\r\n    <div>\r\n      <label>Exp gained:</label>\r\n      {{stats.exp|toLocaleString}}\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_battle\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Win / Loss:</label>\r\n        {{stats.wins|toLocaleString}} / {{stats.losses|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold gained:</label>\r\n        {{stats.gold|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Gold p/h:</label>\r\n        {{goldPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n\r\n    <div id=\"pendoriaplus_stats_ts\">\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>Quint procs:</label>\r\n        {{stats.quints|toLocaleString}} ({{quintsPercentage}}%)\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}} gained:</label>\r\n        {{stats.resources|toLocaleString}}\r\n      </div>\r\n      <div class=\"pendoriaplus_ts_only\">\r\n        <label>{{skill|ucfirst}}/h:</label>\r\n        {{resourcesPerHour|toLocaleString}}\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>";
 
 // import dingalingSound from '../sounds/dingaling.mp3'
 // import popSound from '../sounds/pop.wav'
@@ -1123,7 +1118,7 @@ var StatsPanel = {
   }
 };
 
-__$styleInject("#chat_wrapper {\r\n  position: absolute;\r\n  bottom: 0;\r\n  left: 50%;\r\n  transform: translateX(-50%);\r\n  padding: 0 20px;\r\n  height: 30%;\r\n  width: 100%;\r\n  max-width: 1100px;\r\n  pointer-events: none;\r\n}\r\n\r\n#chat_wrapper #chat {\r\n  position: relative;\r\n  margin: 0 0 0 auto;\r\n  height: 100%;\r\n  width: calc(80%);\r\n  pointer-events: all;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs #chat-content {\r\n  width: 100%;\r\n  margin: 0;\r\n}\r\n\r\n/* Not so much an aside anymore, is it */\r\n#chat_wrapper #chat.with-tabs .wrapper {\r\n  display: grid;\r\n  grid-template-rows: min-content auto;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs aside {\r\n  float: none;\r\n  overflow: hidden;\r\n  height: auto;\r\n  width: 100%;\r\n  padding: 10px 0px 0 0;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs aside ul {\r\n  float: left;\r\n  margin: 0;\r\n}\r\n\r\n#chat_wrapper #chat.with-tabs aside li {\r\n  display: inline-block;\r\n  margin-right: 10px;\r\n}\r\n",undefined);
+__$styleInject("#chat_wrapper {\r\n  position: absolute;\r\n  bottom: 0;\r\n  left: 50%;\r\n  transform: translateX(-50%);\r\n  padding: 0 20px;\r\n  height: 30%;\r\n  width: 100%;\r\n  max-width: 1100px;\r\n  pointer-events: none;\r\n}\r\n\r\n#chat_wrapper #chat {\r\n  position: relative;\r\n  margin: 0 0 0 auto;\r\n  height: 100%;\r\n  width: calc(80%);\r\n  pointer-events: all;\r\n}\r\n\r\n/* Not so much an aside anymore, is it */\r\n#chat.with-tabs #chat-content {\r\n  width: 100%;\r\n  margin: 0;\r\n}\r\n\r\n#chat.with-tabs .wrapper {\r\n  display: grid;\r\n  grid-template-rows: min-content auto;\r\n}\r\n\r\n#chat.with-tabs aside {\r\n  float: none;\r\n  overflow: hidden;\r\n  height: auto;\r\n  width: 100%;\r\n  padding: 10px 0px 0 0;\r\n}\r\n\r\n#chat.with-tabs aside ul {\r\n  float: left;\r\n  margin: 0;\r\n}\r\n\r\n#chat.with-tabs aside li {\r\n  display: inline-block;\r\n  margin-right: 10px;\r\n}\r\n",undefined);
 
 var Chat = {
   // ranEnable: false,
@@ -1132,6 +1127,14 @@ var Chat = {
     enabled: ModuleSetting({
       label: 'Enabled',
       default: true,
+    }),
+    size: ModuleSetting({
+      label: 'Chat size & position',
+      default: 'content',
+      options: ['default', 'content', 'side-by-side'],
+      onChange (value) {
+        this.setSize(value);
+      }
     }),
     tabs: ModuleSetting({
       label: 'Channels as tabs',
@@ -1147,6 +1150,19 @@ var Chat = {
     this.$wrapper = $('<div id="chat_wrapper"></div>');
     this.$chat = $(document).find('#chat');
 
+    this.isDragging = false;
+    this.onMouseMove = this.onMouseMove.bind(this);
+
+    $(document).on('mouseup', () => this.isDragging = false);
+    $(document).on('mousemove', this.onMouseMove);
+    this.$chat.find('#dragable').on('mousedown', (e) => {
+      if (this.settings.size.value === 'content') {
+        e.stopPropagation();
+        window.isDragging = false;
+        this.isDragging = true;
+      }
+    });
+
     if (this.settings.enabled) {
       this.enable();
     }
@@ -1159,15 +1175,13 @@ var Chat = {
 
     this.ranEnable = true;
 
-    this.$chat.wrap(this.$wrapper);
-    this.$chat
-      .prepend('<div class="frame frame-vertical-left"></div>')
-      .prepend('<div class="frame frame-vertical-right"></div>');
+    this.setSize();
+    this.toggleTabs(this.settings.tabs.value);
 
-    log('[Chat]', 'show tabs?', JSON.stringify(this.settings.tabs.value));
-    if (this.settings.tabs.value) {
-      this.$chat.addClass('with-tabs');
-    }
+    // log('[Chat]', 'show tabs?', JSON.stringify(this.settings.tabs.value))
+    // if (this.settings.tabs.value) {
+    //   this.$chat.addClass('with-tabs')
+    // }
   },
 
   disable () {
@@ -1177,14 +1191,49 @@ var Chat = {
 
     this.ranEnable = false;
 
-    this.$chat.unwrap();
-    this.$chat.removeClass('with-tabs');
-    this.$chat.find('.frame-vertical-left, .frame-vertical-right').remove();
+    this.setSize('default');
+    this.toggleTabs(false);
+  },
+
+  setSize (value) {
+    if (typeof value === 'undefined') {
+      value = this.settings.size.value;
+    }
+
+    if (value === 'content') {
+      this.$chat.wrap(this.$wrapper);
+      this.$chat
+        .prepend('<div class="frame frame-vertical-left"></div>')
+        .prepend('<div class="frame frame-vertical-right"></div>');
+    } else {
+      this.$chat.unwrap();
+      this.$chat.find('.frame-vertical-left, .frame-vertical-right').remove();
+    }
+
+    $('body')[value === 'side-by-side' ? 'addClass' : 'removeClass']('pp_chat_side_by_side');
+  },
+
+  onMouseMove (e) {
+    if (e) {
+      e.stopPropagation();
+    }
+
+    if (this.isDragging) {
+      var height = (1 - (event.clientY / $(window).height())) * 100;
+      if(height > 85) {
+        height = '85%';
+      } else if (height < 30) {
+        height = '30%';
+      } else {
+        height = height + '%';
+      }
+      $('#chat_wrapper').css('height', height);
+    }
   },
 
   toggleTabs (value) {
-    if (typeof value == 'undefined') {
-      value = !this.settings.tabs;
+    if (typeof value === 'undefined') {
+      value = !this.settings.tabs.value;
     }
 
     value = !!value;
@@ -1344,7 +1393,7 @@ var ModuleManager = {
   }
 };
 
-__$styleInject("#gameframe-menu {\r\n  width: 80%;\r\n}\r\n\r\n@media only screen and (max-width: 980px) {\r\n  #gameframe-menu li a {\r\n    font-size: 12px;\r\n  }\r\n}\r\n",undefined);
+__$styleInject("#gameframe-menu {\r\n  width: 80%;\r\n}\r\n\r\n.pp_chat_side_by_side #content\r\n{\r\n  right: auto;\r\n  width: 60%;\r\n  height: 90%;\r\n}\r\n\r\n.pp_chat_side_by_side #chat\r\n{\r\n  left: auto;\r\n  width: 42%;\r\n  height: 94%;\r\n  top: 60px;\r\n}\r\n\r\n@media only screen and (max-width: 980px) {\r\n  #gameframe-menu li a {\r\n    font-size: 12px;\r\n  }\r\n}\r\n",undefined);
 
 var PendoriaPlus = {
   isInitialized: false,
@@ -1378,6 +1427,7 @@ var PendoriaPlus = {
   }
 };
 
+// TODO: maybe check/wait for jQuery in case script loads too early
 $(function () {
   if (!window.hasPendoriaPlus) {
     window.hasPendoriaPlus = true;
