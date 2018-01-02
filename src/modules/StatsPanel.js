@@ -86,11 +86,7 @@ export default {
           return
         }
 
-        if (value) {
-          this.initPanel()
-        } else {
-          this.removePanel()
-        }
+        this[value ? 'initPanel' : 'removePanel']()
       },
     }),
     lowActionSoundEnabled: ModuleSetting({
@@ -99,11 +95,15 @@ export default {
     }),
     lowActions: ModuleSetting({
       label: 'Low action sound at actions remaining',
-      default: 10,
+      default: 500,
       constraint: {
         min: 1,
         max: 100,
       },
+    }),
+    lowActionRepeat: ModuleSetting({
+      label: 'Repeat sound every 6 seconds',
+      default: true,
     }),
     sound: ModuleSetting({
       label: 'Low action sound',
@@ -125,6 +125,7 @@ export default {
     log('[StatsPanel]', 'sounds', sounds)
 
     this.ranEnable = false
+    this.soundTimeout = null
 
     this.onTradeskillData = this.onTradeskillData.bind(this)
     this.onBattleData = this.onBattleData.bind(this)
@@ -240,14 +241,21 @@ export default {
   },
 
   checkActionsRemaining (data) {
-    // if (!this.settings.lowActionSoundEnabled.value) {
-    //   return
-    // }
+    if (this.soundTimeout) {
+      clearTimeout(this.soundTimeout)
+      this.soundTimeout = null
+    }
 
-    // TODO: improve check so if it skips a number magically, it will still play
-    log('[StatsPanel]', 'lowActions', data.actionsRemaining, '===', this.settings.lowActions.value, data.actionsRemaining === this.settings.lowActions.value)
-    if (data.actionsRemaining === this.settings.lowActions.value) {
+    // TODO: improve check so if it skips a number magically, it will still play?
+    if (data.actionsRemaining === this.settings.lowActions.value ||
+      (this.settings.lowActionRepeat.value && data.actionsRemaining <= this.settings.lowActions.value)) {
       this.playSound()
+    }
+
+    if (data.actionsRemaining <= 0) {
+      this.soundTimeout = setTimeout(() => {
+        this.checkActionsRemaining(data)
+      }, 6000)
     }
   },
 

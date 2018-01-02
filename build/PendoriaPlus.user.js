@@ -9,7 +9,7 @@
 // @match        http://www.pendoria.net/game
 // @match        https://www.pendoria.net/game
 // @grant        none
-// @require      https://unpkg.com/vue@2.5.13/dist/vue.min.js
+// @require      https://unpkg.com/vue@2.5.13/dist/vue.js
 // ==/UserScript==
 
 (function () {
@@ -33,7 +33,7 @@ function __$styleInject(css, returnValue) {
 
 function __$strToBlobUri(str, mime, isBinary) {try {return window.URL.createObjectURL(new Blob([Uint8Array.from(str.split('').map(function(c) {return c.charCodeAt(0)}))], {type: mime}));} catch (e) {return "data:" + mime + (isBinary ? ";base64," : ",") + str;}}
 
-let debug = false;
+let debug = true;
 
 function log() {
   if (!debug) {
@@ -904,11 +904,7 @@ var StatsPanel = {
           return
         }
 
-        if (value) {
-          this.initPanel();
-        } else {
-          this.removePanel();
-        }
+        this[value ? 'initPanel' : 'removePanel']();
       },
     }),
     lowActionSoundEnabled: ModuleSetting({
@@ -917,11 +913,15 @@ var StatsPanel = {
     }),
     lowActions: ModuleSetting({
       label: 'Low action sound at actions remaining',
-      default: 10,
+      default: 500,
       constraint: {
         min: 1,
-        max: 100,
+        max: 500,
       },
+    }),
+    lowActionRepeat: ModuleSetting({
+      label: 'Repeat sound every 6 seconds',
+      default: true,
     }),
     sound: ModuleSetting({
       label: 'Low action sound',
@@ -943,6 +943,7 @@ var StatsPanel = {
     log('[StatsPanel]', 'sounds', sounds);
 
     this.ranEnable = false;
+    this.soundTimeout = null;
 
     this.onTradeskillData = this.onTradeskillData.bind(this);
     this.onBattleData = this.onBattleData.bind(this);
@@ -1058,14 +1059,22 @@ var StatsPanel = {
   },
 
   checkActionsRemaining (data) {
-    // if (!this.settings.lowActionSoundEnabled.value) {
-    //   return
-    // }
+    if (this.soundTimeout) {
+      clearTimeout(this.soundTimeout);
+      this.soundTimeout = null;
+    }
 
     // TODO: improve check so if it skips a number magically, it will still play
     log('[StatsPanel]', 'lowActions', data.actionsRemaining, '===', this.settings.lowActions.value, data.actionsRemaining === this.settings.lowActions.value);
-    if (data.actionsRemaining === this.settings.lowActions.value) {
+    if (data.actionsRemaining === this.settings.lowActions.value ||
+      (this.settings.lowActionRepeat.value && data.actionsRemaining <= this.settings.lowActions.value)) {
       this.playSound();
+    }
+
+    if (data.actionsRemaining <= 0) {
+      this.soundTimeout = setTimeout(() => {
+        this.checkActionsRemaining(data);
+      }, 6000);
     }
   },
 
